@@ -129,7 +129,7 @@ export default function Home() {
         
         {/* HERO */}
         <section className="relative bg-white pt-20 pb-16 lg:pt-32 lg:pb-24 border-b-2 border-black">
-          <div className={\`\${CONTAINER} relative z-10 text-center\`}>
+          <div className={`${CONTAINER} relative z-10 text-center`}>
             <FadeUp>
               <div className="inline-flex items-center gap-2 mb-6 border-2 border-black px-4 py-1.5 rounded-sm bg-zinc-50">
                 <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
