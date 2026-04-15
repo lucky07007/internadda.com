@@ -4,6 +4,7 @@ import { Poppins } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import Script from "next/script"
 import { AuthProvider } from "@/lib/auth-context"
+import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { InternaBot } from "@/components/InternaBot"
@@ -377,12 +378,14 @@ export default function RootLayout({
           />
         </noscript>
 
-        <AuthProvider>
-          <div className="relative flex min-h-screen flex-col">
-            <div className="flex-1">{children}</div>
-          </div>
-          <InternaBot />
-        </AuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <AuthProvider>
+            <div className="relative flex min-h-screen flex-col bg-white dark:bg-gray-950 transition-colors duration-300">
+              <div className="flex-1">{children}</div>
+            </div>
+            <InternaBot />
+          </AuthProvider>
+        </ThemeProvider>
 
         <Analytics />
       </body>
