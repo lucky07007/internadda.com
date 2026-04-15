@@ -1,54 +1,52 @@
-// app/courses/page.tsx
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import CoursesClient from './courses-client'
 import type { Metadata } from 'next'
 import { courses } from './course-data'
-import { CheckCircle, Shield, Verified } from 'lucide-react'
+import { CheckCircle, Verified, Star } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Free Industry-Ready Courses & Certifications | Powered by UpForge',
-  description:
-    'Master in-demand skills in Development, Data Science, Design and Marketing. Free expert-led courses with certificates map perfectly to your UpForge global identity.',
+  title: 'Free Industry-Ready Courses & Certifications | InternAdda',
+  description: 'Master in-demand skills. Free expert-led courses with certificates map perfectly to your global identity.',
 }
 
 const STATS = [
   { label: '6 Courses',      sub: 'across 5 domains' },
   { label: '100% Free',      sub: 'no hidden fees' },
   { label: 'Certificate',    sub: 'on completion' },
-  { label: 'UpForge',        sub: 'Verified Skill' },
+  { label: 'Verified',       sub: 'Industry Skill' },
 ]
 
 export default function CoursesPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-zinc-50 overflow-x-hidden pt-24 pb-20">
+      <main className="min-h-screen bg-[#f8f9fa] overflow-x-hidden pt-24 pb-20 font-sans">
         {/* ── Hero ── */}
-        <section className="relative bg-white border-b-2 border-black overflow-hidden py-16">
-          <div className="relative max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-center text-center">
+        <section className="relative bg-white border-b border-gray-200 overflow-hidden py-16 lg:py-24">
+          <div className="absolute inset-0 bg-gradient-to-br from-sky-50/80 via-white to-blue-50/50" />
+          <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
 
-              {/* Eyebrow */}
-              <div className="inline-flex items-center gap-2 bg-black text-white px-3 py-1 text-[10px] uppercase font-bold tracking-widest mb-6">
-                <Verified size={12} /> Powered by UpForge
+              <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-full text-xs font-bold mb-6 shadow-sm border border-emerald-100">
+                <Verified size={14} /> Official Certification Partner
               </div>
 
-              <h1 className="text-[2.5rem] sm:text-[3.5rem] xl:text-[4.5rem] font-serif font-black text-black leading-[1.05] tracking-tight mb-4 uppercase">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-[1.15] tracking-tight mb-6">
                 Master the Skills.<br />
-                <span className="text-zinc-500">Earn the Certificate.</span>
+                <span className="text-sky-500">Earn the Certificate.</span>
               </h1>
 
-              <p className="text-black font-medium text-[14px] sm:text-[16px] leading-[1.75] max-w-2xl mx-auto mb-10 tracking-wide uppercase">
-                Learn exactly what global startups need. 100% Free. Directly verified on your UpForge Profile.
+              <p className="text-gray-600 font-medium text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto mb-12">
+                Learn exactly what global startups need. 100% free courses crafted by industry experts.
               </p>
 
               {/* Stats row */}
-              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 border border-black p-4 bg-zinc-50 uppercase tracking-widest">
+              <div className="flex flex-wrap items-center justify-center gap-8 bg-white shadow-md border border-gray-100 rounded-2xl p-6 sm:p-8 w-full max-w-3xl">
                 {STATS.map((s, i) => (
                   <div key={i} className="flex flex-col items-center text-center">
-                    <span className="text-[14px] font-black text-black">{s.label}</span>
-                    <span className="text-[10px] text-zinc-500 font-bold">{s.sub}</span>
+                    <span className="text-2xl font-bold text-sky-500 mb-1">{s.label}</span>
+                    <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">{s.sub}</span>
                   </div>
                 ))}
               </div>
