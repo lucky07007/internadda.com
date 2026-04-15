@@ -1,0 +1,72 @@
+export const internships = [
+  {
+    id: '1', title: 'Strategic Marketing Intern', company: 'UpForge Network',
+    stipend: 'Unpaid / Performance Based', location: 'Remote', tag: 'Marketing',
+    skills: ['Marketing Strategy', 'Campaign Management', 'SEO'], applicants: 342,
+    image: '/python.jpg', otherCompaniesCount: 15,
+    companyLogos: ['/company1.jpg', '/company2.jpg'],
+  },
+  {
+    id: '2', title: 'Sales & Growth Associate', company: 'Global Innovate',
+    stipend: 'Unpaid / Performance Based', location: 'Remote', tag: 'Sales',
+    skills: ['B2B Sales', 'Lead Generation', 'CRM'], applicants: 215,
+    image: '/datascience.jpg', otherCompaniesCount: 8,
+    companyLogos: ['/company3.jpg', '/company4.jpg'],
+  },
+  {
+    id: '3', title: 'Campus Ambassador Program', company: 'UpForge',
+    stipend: 'Unpaid / Performance Based', location: 'Remote', tag: 'Growth',
+    skills: ['Public Speaking', 'Networking', 'Social Media'], applicants: 531,
+    image: '/react.jpg', otherCompaniesCount: 20,
+    companyLogos: ['/company5.jpg', '/company1.jpg'],
+  },
+  {
+    id: '4', title: 'Event Management Specialist', company: 'NextGen Student Hub',
+    stipend: 'Unpaid / Performance Based', location: 'Remote', tag: 'Operations',
+    skills: ['Event Planning', 'Coordination', 'Communication'], applicants: 156,
+    image: '/python.jpg', otherCompaniesCount: 5,
+    companyLogos: ['/company2.jpg', '/company3.jpg'],
+  },
+  {
+    id: '5', title: 'SEO & Content Executive', company: 'WebRank Global',
+    stipend: 'Unpaid / Performance Based', location: 'Remote', tag: 'SEO',
+    skills: ['SEO', 'Content Writing', 'Google Analytics'], applicants: 289,
+    image: '/datascience.jpg', otherCompaniesCount: 12,
+    companyLogos: ['/company4.jpg', '/company5.jpg'],
+  },
+  {
+    id: '6', title: 'Social Media Manager', company: 'Creative Student Agency',
+    stipend: 'Unpaid / Performance Based', location: 'Remote', tag: 'Design',
+    skills: ['Instagram', 'LinkedIn', 'Content Creation'], applicants: 412,
+    image: '/react.jpg', otherCompaniesCount: 7,
+    companyLogos: ['/company1.jpg', '/company2.jpg'],
+  },
+  {
+    id: '7', title: 'Design & Creative Intern', company: 'Pixel Forge',
+    stipend: 'Unpaid / Performance Based', location: 'Remote', tag: 'Creative',
+    skills: ['Figma', 'Adobe Creative Suite', 'UI/UX'], applicants: 304,
+    image: '/python.jpg', otherCompaniesCount: 9,
+    companyLogos: ['/company3.jpg', '/company4.jpg'],
+  },
+  {
+    id: '8', title: 'Community Manager', company: 'UpForge Community',
+    stipend: 'Unpaid / Performance Based', location: 'Remote', tag: 'Community',
+    skills: ['Discord', 'Community Building', 'Engagement'], applicants: 187,
+    image: '/datascience.jpg', otherCompaniesCount: 6,
+    companyLogos: ['/company5.jpg', '/company1.jpg'],
+  },
+  {
+    id: '9', title: 'Business Development Intern', company: 'ScaleUp Ventures',
+    stipend: 'Unpaid / Performance Based', location: 'Remote', tag: 'Business',
+    skills: ['Pitching', 'Market Research', 'Networking'], applicants: 245,
+    image: '/react.jpg', otherCompaniesCount: 11,
+    companyLogos: ['/company2.jpg', '/company3.jpg'],
+  },
+  {
+    id: '10', title: 'Digital Growth Consultant', company: 'Apex Growth',
+    stipend: 'Unpaid / Performance Based', location: 'Remote', tag: 'Growth',
+    skills: ['Data Analysis', 'Performance Marketing', 'Strategy'], applicants: 168,
+    image: '/python.jpg', otherCompaniesCount: 4,
+    companyLogos: ['/company4.jpg', '/company5.jpg'],
+  }
+];
