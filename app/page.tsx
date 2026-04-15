@@ -22,7 +22,7 @@ const jsonLd = {
     item: {
       '@type': 'JobPosting',
       title: job.title,
-      description: \`\${job.title} at \${job.company}. Required skills: \${job.skills.join(', ')}. Free to apply, performance-based with certification. Verified on UpForge.\`,
+      description: `${job.title} at ${job.company}. Required skills: ${job.skills.join(', ')}. Free to apply, performance-based with certification. Verified on UpForge.`,
       hiringOrganization: { '@type': 'Organization', name: job.company },
       jobLocationType: 'TELECOMMUTE',
       applicantLocationRequirements: { '@type': 'Country', name: 'Worldwide' },
@@ -58,7 +58,7 @@ function InternshipCard({ id, title, company, stipend, location, skills, applica
   
   const go = (e: React.MouseEvent) => {
     e.preventDefault();
-    router.push(user ? \`/apply/\${id}\` : \`/auth/signin?callbackUrl=/apply/\${id}\`);
+    router.push(user ? `/apply/${id}` : `/auth/signin?callbackUrl=/apply/${id}`);
   };
 
   return (
