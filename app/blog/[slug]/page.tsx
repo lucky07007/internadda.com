@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { ArrowLeft, Calendar, User, Verified } from 'lucide-react'
+import { ArrowLeft, Calendar, User, Verified, Share2 } from 'lucide-react'
 
 export function generateStaticParams() {
   return blogs.map((b) => ({ slug: b.slug }))
@@ -16,24 +16,23 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!blog) return {}
 
   return {
-    title: `${blog.title} | InternAdda`,
+    title: `${blog.title} | InternAdda Journal`,
     description: blog.excerpt,
   }
 }
 
 function parseMarkdown(md: string) {
-  // Ultra simple markdown mock parser for the B&W theme
   let html = md.trim()
   // Bold
-  html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-black text-black">$1</strong>')
-  // H1
-  html = html.replace(/^# (.*$)/gim, '<h1 class="text-3xl sm:text-4xl font-serif font-black mb-6 mt-10 uppercase text-black">$1</h1>')
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>')
+  // H1 (should theoretically not exist heavily if title is outside, but handle it)
+  html = html.replace(/^# (.*$)/gim, '<h1 class="text-3xl sm:text-4xl font-extrabold mb-6 mt-10 text-gray-900 tracking-tight">$1</h1>')
   // H2
-  html = html.replace(/^## (.*$)/gim, '<h2 class="text-2xl font-serif font-bold mb-4 mt-8 uppercase text-black border-b-2 border-black pb-2">$1</h2>')
+  html = html.replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mb-4 mt-10 text-gray-900 tracking-tight">$1</h2>')
   // Paragraphs
   html = html.replace(/^(?!<h|<ul|<li)(.*$)/gim, (match) => {
     if (!match.trim()) return ''
-    return `<p class="mb-5 text-zinc-700 text-lg leading-relaxed">${match}</p>`
+    return `<p class="mb-5 text-gray-600 font-medium text-[17px] leading-[1.8]">${match}</p>`
   })
   
   return html
@@ -48,31 +47,38 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   return (
     <>
       <Header />
-      <main className="w-full bg-zinc-50 min-h-screen pt-24 pb-20">
-        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/blog" className="inline-flex items-center gap-2 text-[11px] font-bold text-zinc-500 uppercase tracking-widest hover:text-black transition-colors mb-10">
-            <ArrowLeft size={14} /> Back to Insights
+      <main className="w-full bg-[#f8f9fa] min-h-screen pt-24 pb-20 font-sans">
+        <article className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-sky-600 hover:text-sky-700 bg-sky-50 px-4 py-2 rounded-xl transition-colors mb-10 w-auto">
+            <ArrowLeft size={16} /> Back to Insights
           </Link>
 
-          <header className="mb-12 border-b-4 border-black pb-10">
-            <div className="inline-flex items-center gap-2 mb-6 bg-black text-white px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-sm">
-                <Verified size={12} /> Powered by UpForge
+          <header className="mb-10 text-center">
+            <div className="inline-flex items-center gap-2 mb-6 bg-emerald-50 text-emerald-600 px-3 py-1 text-xs font-bold rounded-md">
+                <Verified size={14} /> Career Guide
             </div>
             
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black text-black leading-[1.05] tracking-tight uppercase mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-[1.15] tracking-tight mb-8">
               {blog.title}
             </h1>
             
-            <div className="flex flex-wrap items-center gap-6 text-[12px] font-bold uppercase tracking-widest text-zinc-600">
-              <span className="flex items-center gap-2"><User size={14} className="text-black" /> {blog.author}</span>
-              <span className="flex items-center gap-2"><Calendar size={14} className="text-black" /> {blog.date}</span>
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-gray-500 py-4 border-y border-gray-200">
+              <span className="flex items-center gap-2"><User size={16} className="text-sky-500" /> {blog.author}</span>
+              <span className="flex items-center gap-2"><Calendar size={16} className="text-sky-500" /> {blog.date}</span>
             </div>
           </header>
 
           <div 
-            className="prose-container pb-20"
+            className="bg-white p-8 sm:p-12 rounded-3xl border border-gray-100 shadow-sm"
             dangerouslySetInnerHTML={{ __html: parseMarkdown(blog.content) }}
           />
+
+          <div className="mt-12 flex justify-center">
+             <button className="flex items-center gap-2 bg-white text-gray-700 font-semibold px-6 py-3 rounded-xl border border-gray-200 shadow-sm hover:border-sky-300 hover:text-sky-600 transition-colors">
+               <Share2 size={16} /> Share this article
+             </button>
+          </div>
         </article>
       </main>
       <Footer />
