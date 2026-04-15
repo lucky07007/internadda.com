@@ -3,11 +3,6 @@
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { useAuth } from '@/lib/auth-context'
-import { useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
-import { Verified, CheckCircle, ArrowRight } from 'lucide-react'
-import { internships } from '@/data/internships'
-
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { Verified, CheckCircle, ArrowRight } from 'lucide-react'
