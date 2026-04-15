@@ -18,7 +18,7 @@ function InternshipCard({ id, title, company, stipend, location, skills, applica
   
   const go = (e: React.MouseEvent) => {
     e.preventDefault();
-    router.push(user ? \`/apply/\${id}\` : \`/auth/signin?callbackUrl=/apply/\${id}\`);
+    router.push(user ? `/apply/${id}` : `/auth/signin?callbackUrl=/apply/${id}`);
   };
 
   return (
