@@ -97,7 +97,7 @@ export default function InternshipsPage() {
               <button 
                 key={f}
                 onClick={() => setFilter(f)}
-                className={\`px-4 py-2 text-[11px] font-bold uppercase tracking-widest border \${filter === f ? 'bg-black text-white border-black' : 'bg-white text-zinc-600 border-zinc-300 hover:border-black'} transition-colors\`}
+                className={`px-4 py-2 text-[11px] font-bold uppercase tracking-widest border ${filter === f ? 'bg-black text-white border-black' : 'bg-white text-zinc-600 border-zinc-300 hover:border-black'} transition-colors`}
               >
                 {f}
               </button>
