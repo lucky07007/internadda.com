@@ -8,7 +8,14 @@ import { useState, useEffect } from 'react'
 import { Verified, CheckCircle, ArrowRight } from 'lucide-react'
 import { internships } from '@/data/internships'
 
-export default function ApplyPage({ params }: { params: { id: string } }) {
+import { useParams, useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { Verified, CheckCircle, ArrowRight } from 'lucide-react'
+import { internships } from '@/data/internships'
+
+export default function ApplyPage() {
+  const params = useParams();
+  const id = params?.id as string;
   const { user, loading } = useAuth();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -24,14 +31,14 @@ export default function ApplyPage({ params }: { params: { id: string } }) {
   useEffect(() => { setMounted(true); }, []);
   useEffect(() => {
     if (mounted && !loading && !user) {
-      router.replace(\`/auth/signin?callbackUrl=/apply/\${params.id}\`);
+      router.replace(`/auth/signin?callbackUrl=/apply/${id}`);
     }
-  }, [user, loading, mounted, router, params.id]);
+  }, [user, loading, mounted, router, id]);
 
   if (!mounted || loading) return <div className="min-h-screen bg-zinc-50 flex items-center justify-center font-bold text-xl uppercase tracking-widest">Loading...</div>;
   if (!user) return null;
 
-  const job = internships.find(i => i.id === params.id) || internships[0];
+  const job = internships.find(i => i.id === id) || internships[0];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
