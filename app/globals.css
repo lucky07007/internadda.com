@@ -4,110 +4,54 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Core Brand Colors - InternAdda Logo Scheme */
-  --background: oklch(0.99 0 0); /* White */
-  --foreground: oklch(0.10 0 0); /* Dark navy #0F1729 */
-  --card: oklch(1 0 0); /* Pure white */
-  --card-foreground: oklch(0.10 0 0); /* Dark navy */
+  /* Vibrant Educational Theme - Internshala Inspired */
+  --background: oklch(0.99 0 0); /* Pure White */
+  --foreground: oklch(0.20 0 0); /* Dark slate for high contrast */
+  
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.20 0 0);
+  
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.10 0 0);
+  --popover-foreground: oklch(0.20 0 0);
   
-  /* Primary - Black */
-  --primary: oklch(0 0 0); /* Pure Black */
-  --primary-foreground: oklch(1 0 0); /* White */
+  /* Primary - Vibrant Sky Blue */
+  --primary: oklch(0.65 0.16 240); /* #00A5EC equivalent */
+  --primary-foreground: oklch(1 0 0);
   
-  /* Secondary - Dark Gray */
-  --secondary: oklch(0.2 0 0); /* Very Dark Gray */
-  --secondary-foreground: oklch(1 0 0); /* White */
+  /* Secondary - Soft light blue for backgrounds */
+  --secondary: oklch(0.96 0.02 240); 
+  --secondary-foreground: oklch(0.45 0.16 240); 
   
-  /* Neutral tones */
-  --muted: oklch(0.95 0 0); /* Light gray */
-  --muted-foreground: oklch(0.4 0 0); /* Medium gray */
-  --accent: oklch(0.9 0 0); /* Lighter gray */
-  --accent-foreground: oklch(0 0 0); /* Black */
+  /* Muted - Grays */
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.55 0 0);
   
-  /* Destructive */
-  --destructive: oklch(0.4 0.1 20); /* Muted Red */
+  --accent: oklch(0.96 0.02 240);
+  --accent-foreground: oklch(0.45 0.16 240);
+  
+  /* Destructive/Alerts */
+  --destructive: oklch(0.60 0.20 20);
   --destructive-foreground: oklch(1 0 0);
   
-  /* Borders and inputs */
-  --border: oklch(0.85 0 0); /* Gray border */
-  --input: oklch(0.9 0 0); /* Light input */
-  --ring: oklch(0 0 0); /* Black ring */
+  /* Borders and Rings */
+  --border: oklch(0.92 0 0);
+  --input: oklch(0.92 0 0);
+  --ring: oklch(0.65 0.16 240);
   
-  /* Chart colors */
-  --chart-1: oklch(0.40 0.27 260); /* Deep blue */
-  --chart-2: oklch(0.65 0.22 195); /* Cyan */
-  --chart-3: oklch(0.55 0.20 15); /* Coral */
-  --chart-4: oklch(0.70 0.18 85); /* Green */
-  --chart-5: oklch(0.60 0.15 325); /* Pink */
+  /* Chart Colors */
+  --chart-1: oklch(0.65 0.16 240);
+  --chart-2: oklch(0.75 0.15 150);
+  --chart-3: oklch(0.85 0.20 75);
+  --chart-4: oklch(0.60 0.18 335);
+  --chart-5: oklch(0.50 0.20 285);
   
-  --radius: 0.625rem;
-  
-  /* Sidebar colors */
-  --sidebar: oklch(0.96 0.01 0); /* Light gray */
-  --sidebar-foreground: oklch(0.10 0 0);
-  --sidebar-primary: oklch(0.40 0.27 260);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.65 0.22 195);
-  --sidebar-accent-foreground: oklch(0.10 0 0);
-  --sidebar-border: oklch(0.92 0.01 0);
-  --sidebar-ring: oklch(0.40 0.27 260);
-}
-
-.dark {
-  /* Dark mode - Navy-based with logo colors */
-  --background: oklch(0.08 0 0); /* Deep navy #0F1729 */
-  --foreground: oklch(0.95 0 0); /* Off-white */
-  --card: oklch(0.12 0.02 260); /* Dark blue-gray */
-  --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.12 0.02 260);
-  --popover-foreground: oklch(0.95 0 0);
-  
-  /* Primary - White */
-  --primary: oklch(1 0 0); /* Pure White */
-  --primary-foreground: oklch(0 0 0); /* Black */
-  
-  /* Secondary - Light Gray */
-  --secondary: oklch(0.8 0 0); /* Light Gray */
-  --secondary-foreground: oklch(0 0 0); /* Black */
-  
-  /* Neutral */
-  --muted: oklch(0.2 0 0); /* Dark gray */
-  --muted-foreground: oklch(0.6 0 0); /* Medium gray */
-  --accent: oklch(0.2 0 0); /* Dark gray */
-  --accent-foreground: oklch(1 0 0); /* White */
-  
-  /* Destructive */
-  --destructive: oklch(0.4 0.1 20); /* Muted red */
-  --destructive-foreground: oklch(1 0 0);
-  
-  /* Borders */
-  --border: oklch(0.3 0 0); /* Dark gray */
-  --input: oklch(0.2 0 0); /* Even darker gray */
-  --ring: oklch(1 0 0); /* White */
-  
-  /* Chart colors - adjusted for dark theme */
-  --chart-1: oklch(0.55 0.27 260); /* Bright blue */
-  --chart-2: oklch(0.70 0.22 195); /* Bright cyan */
-  --chart-3: oklch(0.75 0.18 85); /* Bright green */
-  --chart-4: oklch(0.78 0.18 65); /* Bright orange */
-  --chart-5: oklch(0.70 0.15 15); /* Bright coral */
-  
-  /* Sidebar */
-  --sidebar: oklch(0.12 0.02 260);
-  --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: oklch(0.55 0.27 260);
-  --sidebar-primary-foreground: oklch(0.08 0 0);
-  --sidebar-accent: oklch(0.70 0.22 195);
-  --sidebar-accent-foreground: oklch(0.08 0 0);
-  --sidebar-border: oklch(0.20 0.01 0);
-  --sidebar-ring: oklch(0.55 0.27 260);
+  --radius: 0.75rem; /* softer, friendlier corners */
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-sans: 'Inter', 'Roboto', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-serif: var(--font-sans); /* Strip out the aggressive serifs completely */
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -127,23 +71,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @layer base {
@@ -151,6 +82,11 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground tracking-normal font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    /* Educational layouts use friendly, slightly tighter headings */
+    letter-spacing: -0.02em;
+    font-weight: 700;
   }
 }
