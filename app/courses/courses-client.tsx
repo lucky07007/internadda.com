@@ -1,34 +1,21 @@
 'use client'
-// app/courses/courses-client.tsx
 
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search, Clock, Users, Star, ArrowRight,
-  BookOpen, Lock, X,
+  BookOpen, Lock, X, ChevronRight
 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import type { Course } from './course-data'
 
-// ─── Category colour map ──────────────────────────────────────────────────────
-const CAT: Record<string, { text: string; bg: string; border: string; dot: string }> = {
-  Development:   { text: '#4f46e5', bg: '#eef2ff', border: '#c7d2fe', dot: '#4f46e5' },
-  'Data Science':{ text: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe', dot: '#7c3aed' },
-  Design:        { text: '#db2777', bg: '#fdf2f8', border: '#fbcfe8', dot: '#db2777' },
-  Marketing:     { text: '#d97706', bg: '#fffbeb', border: '#fde68a', dot: '#d97706' },
-  Business:      { text: '#0891b2', bg: '#ecfeff', border: '#a5f3fc', dot: '#0891b2' },
-}
-const fallback = { text: '#64748b', bg: '#f8fafc', border: '#e2e8f0', dot: '#94a3b8' }
-
 const CATEGORIES = ['All', 'Development', 'Data Science', 'Design', 'Marketing', 'Business']
 
-// ─── Card ─────────────────────────────────────────────────────────────────────
 function CourseCard({ course }: { course: Course }) {
   const { user } = useAuth()
   const router   = useRouter()
-  const c        = CAT[course.category] ?? fallback
   const totalLessons = course.modules.reduce((s, m) => s + m.lessons.length, 0)
 
   const handleEnroll = () => {
@@ -37,85 +24,74 @@ function CourseCard({ course }: { course: Course }) {
 
   return (
     <motion.article
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="group flex flex-col h-full bg-white rounded-2xl border border-slate-200/80 overflow-hidden hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-100/50 transition-colors duration-300"
+      whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
+      className="group flex flex-col h-full bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm transition-all duration-300"
     >
       {/* Thumbnail */}
-      <div className="relative h-40 bg-slate-100 overflow-hidden flex-shrink-0">
+      <div className="relative h-44 bg-gray-100 overflow-hidden flex-shrink-0">
         <Image
           src={course.image} alt={course.title} fill
           sizes="(max-width:640px)100vw,(max-width:1280px)50vw,33vw"
           className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/35 via-transparent to-transparent" />
-
-        {/* Category */}
-        <span className="absolute top-3 left-3 text-[10.5px] font-bold px-2.5 py-1 rounded-lg shadow-sm"
-          style={{ background: 'rgba(255,255,255,0.95)', color: c.text, border: `1px solid ${c.border}` }}>
-          {course.category}
-        </span>
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-gray-900/40 to-transparent" />
 
         {/* Rating */}
-        <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/95 px-2.5 py-1 rounded-lg shadow-sm">
-          <Star size={10} className="fill-amber-400 text-amber-400" />
-          <span className="text-[10.5px] font-bold text-slate-700">{course.rating}</span>
+        <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-white/95 px-3 py-1.5 rounded-xl shadow-sm backdrop-blur-sm">
+          <Star size={12} className="fill-amber-400 text-amber-400" />
+          <span className="text-[12px] font-bold text-gray-800">{course.rating}</span>
         </div>
 
         {/* Free badge */}
-        <span className="absolute bottom-3 left-3 text-[10px] font-bold px-2 py-0.5 rounded-md tracking-wide text-white"
-          style={{ background: '#059669' }}>
-          FREE
+        <span className="absolute bottom-4 left-4 text-[12px] font-extrabold px-3 py-1.5 rounded-xl text-white bg-emerald-500 shadow-sm shadow-emerald-500/20 tracking-wide uppercase">
+          100% FREE
         </span>
       </div>
 
       {/* Body */}
-      <div className="flex flex-col flex-1 p-5 gap-3.5">
+      <div className="flex flex-col flex-1 p-6 gap-4">
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
-            {course.level} · {course.instructor}
+          <p className="text-[12px] font-bold text-sky-500 mb-2">
+            {course.category} <span className="text-gray-300 mx-1">•</span> {course.level}
           </p>
-          <h3 className="text-[15px] font-bold text-slate-900 leading-snug">{course.title}</h3>
+          <h3 className="text-lg font-bold text-gray-900 leading-snug group-hover:text-sky-600 transition-colors">{course.title}</h3>
         </div>
 
-        <p className="text-[12.5px] text-slate-500 leading-relaxed line-clamp-2">{course.description}</p>
-
-        {/* Meta row */}
-        <div className="flex items-center gap-3.5 text-[11.5px] text-slate-400 pt-2.5 border-t border-slate-100">
-          <span className="flex items-center gap-1"><Clock size={11} className="text-indigo-400" />{course.duration}</span>
-          <span className="flex items-center gap-1"><BookOpen size={11} className="text-indigo-400" />{totalLessons} lessons</span>
-          <span className="flex items-center gap-1"><Users size={11} className="text-indigo-400" />{course.students.toLocaleString('en-IN')}+</span>
-        </div>
+        <p className="text-[14px] font-medium text-gray-500 leading-relaxed line-clamp-2">{course.description}</p>
 
         {/* Topics */}
-        <div className="flex flex-wrap gap-1.5">
-          {course.topics.map(t => (
-            <span key={t} className="text-[10.5px] font-semibold px-2.5 py-0.5 rounded-md"
-              style={{ background: c.bg, color: c.text, border: `1px solid ${c.border}` }}>
+        <div className="flex flex-wrap gap-2">
+          {course.topics.slice(0, 3).map(t => (
+            <span key={t} className="text-[12px] font-medium px-3 py-1 rounded-lg bg-gray-50 text-gray-600 border border-gray-100">
               {t}
             </span>
           ))}
         </div>
 
-        {/* CTA */}
+        {/* Meta row */}
+        <div className="flex items-center justify-between text-[13px] font-medium text-gray-500 pt-4 mt-auto border-t border-gray-100">
+          <span className="flex items-center gap-1.5"><Clock size={14} className="text-gray-400" />{course.duration}</span>
+          <span className="flex items-center gap-1.5"><BookOpen size={14} className="text-gray-400" />{totalLessons} lessons</span>
+          <span className="flex items-center gap-1.5"><Users size={14} className="text-gray-400" />{course.students.toLocaleString('en-IN')}+</span>
+        </div>
+      </div>
+
+      {/* Enroll footer */}
+      <div className="px-6 pb-6 mt-1">
         <button
           onClick={handleEnroll}
-          className="mt-auto w-full bg-[#1a1063] hover:bg-indigo-900 text-white text-[13px] font-semibold rounded-xl h-10 shadow-sm shadow-indigo-900/20 transition-all hover:shadow-md hover:shadow-indigo-900/30 active:scale-[0.98] flex items-center justify-center gap-2"
+          className="w-full bg-gray-50 hover:bg-sky-500 text-gray-700 hover:text-white text-[15px] font-bold rounded-2xl h-12 transition-all flex items-center justify-center gap-2 group/btn"
         >
-          {user
-            ? <><BookOpen size={13} /> Start Learning</>
-            : <><Lock size={13} /> Sign in to Enroll</>
-          }
-          <ArrowRight size={12} className="ml-auto opacity-50" />
+          {user ? 'Start Learning' : 'Login to Enroll'}
+          <ChevronRight size={16} className="text-gray-400 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all" />
         </button>
       </div>
     </motion.article>
   )
 }
 
-// ─── Main export ─────────────────────────────────────────────────────────────
 export default function CoursesClient({ initialCourses }: { initialCourses: Course[] }) {
-  const [search,   setSearch]   = useState('')
+  const [search, setSearch]   = useState('')
   const [category, setCategory] = useState('All')
 
   const filtered = useMemo(() => initialCourses.filter(c => {
@@ -129,24 +105,23 @@ export default function CoursesClient({ initialCourses }: { initialCourses: Cour
   }), [search, category, initialCourses])
 
   return (
-    <div className="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pb-14 sm:pb-16">
+    <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 pb-16">
 
-      {/* ── Filter bar ── */}
-      <div className="py-7 flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+      {/* Filter bar */}
+      <div className="py-8 flex flex-col sm:flex-row items-center gap-4 border-b border-gray-200 mb-8">
         {/* Search */}
-        <div className="relative w-full sm:max-w-xs">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+        <div className="relative w-full sm:max-w-sm">
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search by title or skill…"
+            placeholder="Search for skills, topics..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-10 pr-9 py-2.5 text-[13.5px] border border-slate-200 rounded-xl bg-white outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100/60 transition-all text-slate-700 placeholder:text-slate-400"
+            className="w-full pl-11 pr-10 py-3 text-[14px] border border-gray-200 rounded-2xl bg-white outline-none focus:border-sky-300 focus:ring-4 focus:ring-sky-100 transition-all text-gray-700 font-medium placeholder:font-normal"
           />
           {search && (
-            <button onClick={() => setSearch('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
-              <X size={13} />
+            <button onClick={() => setSearch('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+              <X size={16} />
             </button>
           )}
         </div>
@@ -157,55 +132,28 @@ export default function CoursesClient({ initialCourses }: { initialCourses: Cour
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className={`text-[12px] font-semibold px-3.5 py-1.5 rounded-lg border transition-all whitespace-nowrap ${
+              className={`text-[13px] font-bold px-4 py-2 rounded-xl transition-all whitespace-nowrap ${
                 category === cat
-                  ? 'bg-[#1a1063] text-white border-[#1a1063] shadow-sm shadow-indigo-900/20'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-200 hover:text-indigo-700'
+                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-sky-200 hover:bg-sky-50 hover:text-sky-600'
               }`}
             >
               {cat}
             </button>
           ))}
         </div>
-
-        {/* Count + clear */}
-        <div className="hidden sm:flex items-center gap-3 ml-auto">
-          <p className="text-[12px] font-medium text-slate-500 whitespace-nowrap">
-            <span className="font-bold text-slate-800">{filtered.length}</span> course{filtered.length !== 1 ? 's' : ''}
-          </p>
-          {(search || category !== 'All') && (
-            <button
-              onClick={() => { setSearch(''); setCategory('All') }}
-              className="text-[12px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">
-              <X size={11} /> Clear
-            </button>
-          )}
-        </div>
       </div>
 
-      {/* Mobile count */}
-      <div className="flex sm:hidden items-center justify-between mb-4">
-        <p className="text-[12px] font-medium text-slate-500">
-          <span className="font-bold text-slate-800">{filtered.length}</span> course{filtered.length !== 1 ? 's' : ''}
-        </p>
-        {(search || category !== 'All') && (
-          <button onClick={() => { setSearch(''); setCategory('All') }}
-            className="text-[12px] font-semibold text-indigo-600 flex items-center gap-1">
-            <X size={11} /> Clear filters
-          </button>
-        )}
-      </div>
-
-      {/* ── Grid ── */}
+      {/* Grid */}
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <AnimatePresence mode="popLayout">
             {filtered.map((course, i) => (
               <motion.div key={course.id} layout
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.3, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}>
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4, delay: i * 0.05, ease: 'easeOut' }}>
                 <CourseCard course={course} />
               </motion.div>
             ))}
@@ -216,49 +164,38 @@ export default function CoursesClient({ initialCourses }: { initialCourses: Cour
           key="empty"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-20 text-center"
+          className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-gray-100 shadow-sm text-center max-w-2xl mx-auto"
         >
-          <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
-            <Search size={22} className="text-slate-300" />
+          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+            <Search size={24} className="text-gray-400" />
           </div>
-          <h3 className="text-[14.5px] font-bold text-slate-800 mb-1">No courses found</h3>
-          <p className="text-[13px] text-slate-500 mb-4">Try a different keyword or browse all categories.</p>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">No courses found</h3>
+          <p className="text-[15px] font-medium text-gray-500 mb-6">We couldn't find any courses matching your criteria.</p>
           <button
             onClick={() => { setSearch(''); setCategory('All') }}
-            className="text-[12.5px] font-bold text-indigo-600 border border-indigo-200 bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-100 transition-colors">
+            className="text-[14px] font-bold text-sky-600 border border-sky-200 bg-sky-50 px-6 py-2.5 rounded-xl hover:bg-sky-100 transition-colors">
             Clear filters
           </button>
         </motion.div>
       )}
 
-      {/* ── Bottom CTA — same dark banner as rest of site ── */}
-      <div className="mt-12 sm:mt-14">
-        <div className="relative rounded-2xl overflow-hidden" style={{ background: '#1a1063' }}>
-          <div aria-hidden className="absolute inset-0 opacity-[0.04] pointer-events-none">
-            <svg width="100%" height="100%">
-              <defs><pattern id="cdp" width="24" height="24" patternUnits="userSpaceOnUse">
-                <circle cx="1.5" cy="1.5" r="1" fill="white" />
-              </pattern></defs>
-              <rect width="100%" height="100%" fill="url(#cdp)" />
-            </svg>
+      {/* Bottom CTA */}
+      <div className="mt-20">
+        <div className="bg-gradient-to-r from-sky-500 to-blue-600 rounded-3xl relative overflow-hidden shadow-xl shadow-sky-500/10">
+          <div className="absolute right-0 top-0 w-1/2 h-full opacity-20">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full"><path d="M0 100 C 20 0 50 0 100 100 Z" fill="white"/></svg>
           </div>
-          <div aria-hidden className="absolute inset-y-0 right-0 w-1/2 pointer-events-none"
-            style={{ background: 'linear-gradient(to left, rgba(99,102,241,0.28), transparent)' }} />
-
-          <div className="relative flex flex-col items-center text-center sm:flex-row sm:items-center sm:justify-between sm:text-left gap-6 px-7 sm:px-10 xl:px-14 py-9">
-            <div>
-              <p className="text-[10.5px] font-bold uppercase tracking-[0.16em] mb-2" style={{ color: 'rgba(196,181,253,0.9)' }}>
-                Can't find your topic?
-              </p>
-              <h2 className="text-[1.4rem] sm:text-[1.65rem] font-extrabold text-white leading-tight tracking-tight mb-2">
-                New courses every week.
+          <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 px-8 md:px-12 py-12">
+            <div className="text-center md:text-left">
+              <h2 className="text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-3">
+                Cannot find your perfect course?
               </h2>
-              <p className="text-[13.5px] leading-relaxed max-w-md mx-auto sm:mx-0" style={{ color: 'rgba(199,210,254,0.75)' }}>
-                We release new masterclasses regularly. Join the waitlist to be first to know about new certifications.
+              <p className="text-[16px] text-sky-100 font-medium max-w-xl">
+                We add verified, expert-led courses every single week. Sign up and turn on notifications to never miss out!
               </p>
             </div>
-            <button className="flex-shrink-0 inline-flex items-center gap-2 bg-white text-[#1a1063] hover:bg-slate-50 font-bold px-6 py-3 text-[13.5px] rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap">
-              Join the Waitlist <ArrowRight size={14} />
+            <button className="flex-shrink-0 inline-flex items-center gap-2 bg-white text-sky-600 hover:bg-gray-50 font-extrabold px-8 py-4 text-[15px] rounded-xl shadow-xl transition-all hover:scale-105 whitespace-nowrap">
+              Join the Waitlist
             </button>
           </div>
         </div>
