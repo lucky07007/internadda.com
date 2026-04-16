@@ -2,7 +2,7 @@
 
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { ArrowRight, Search, Star, MapPin, Building, Briefcase, Award, Sparkles, TrendingUp, Clock, GraduationCap, Shield, Zap, Users, CheckCircle, Globe, ChevronRight, Download, Apple, Smartphone } from 'lucide-react'
+import { ArrowRight, Star, MapPin, Building, Briefcase, Award, Sparkles, TrendingUp, Clock, GraduationCap, Shield, Zap, Users, CheckCircle, Globe, ChevronRight, Download, Apple, Smartphone, Laptop, PenTool, BarChart, Code2 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -16,7 +16,7 @@ const jsonLd = {
   '@type': 'ItemList',
   name: 'Global Internships & Jobs - InternAdda',
   description: 'World\'s leading internship and job platform for students and freshers. 50L+ downloads, 28L+ placements.',
-  itemListElement: featuredInternships.map((job, i) => ({
+  itemListElement: featuredInternships.map((job: any, i: number) => ({
     '@type': 'ListItem',
     position: i + 1,
     item: {
@@ -57,7 +57,6 @@ function InternshipCard({ id, title, company, stipend, location, duration, skill
       className="group bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 flex flex-col h-full"
     >
       <div className="p-5 flex-1 flex flex-col">
-        {/* Company & Verified */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
@@ -78,12 +77,10 @@ function InternshipCard({ id, title, company, stipend, location, duration, skill
           )}
         </div>
 
-        {/* Title */}
         <h3 className="text-base font-semibold text-gray-900 leading-snug mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
           {title}
         </h3>
 
-        {/* Details */}
         <div className="flex items-center gap-4 mb-4 text-sm">
           <div className="flex items-center gap-1.5 text-gray-600">
             <Clock className="w-4 h-4 text-gray-400" />
@@ -94,21 +91,19 @@ function InternshipCard({ id, title, company, stipend, location, duration, skill
           </div>
         </div>
 
-        {/* Skills */}
         <div className="flex flex-wrap gap-1.5 mb-4">
-          {skills.slice(0, 3).map((skill: string, idx: number) => (
+          {skills?.slice(0, 3).map((skill: string, idx: number) => (
             <span key={idx} className="text-[10px] font-medium px-2.5 py-1 bg-gray-100 text-gray-600 rounded-md">
               {skill}
             </span>
           ))}
-          {skills.length > 3 && (
+          {skills?.length > 3 && (
             <span className="text-[10px] font-medium px-2.5 py-1 bg-gray-100 text-gray-500 rounded-md">
               +{skills.length - 3}
             </span>
           )}
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
           <div className="flex items-center gap-1 text-xs text-gray-500">
             <Users className="w-3.5 h-3.5" />
@@ -156,7 +151,6 @@ function StatCard({ value, label, icon: Icon }: any) {
 
 export default function Home() {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState('all');
 
   const stats = [
     { value: '50L+', label: 'App Downloads', icon: Download },
@@ -166,12 +160,12 @@ export default function Home() {
   ];
 
   const categories = [
-    { icon: Code, title: 'Engineering', count: '12.5K', color: 'text-blue-600', bgColor: 'bg-blue-50' },
+    { icon: Code2, title: 'Engineering', count: '12.5K', color: 'text-blue-600', bgColor: 'bg-blue-50' },
     { icon: TrendingUp, title: 'Marketing', count: '5.2K', color: 'text-orange-600', bgColor: 'bg-orange-50' },
-    { icon: LayoutDashboard, title: 'Design', count: '3.8K', color: 'text-purple-600', bgColor: 'bg-purple-50' },
+    { icon: PenTool, title: 'Design', count: '3.8K', color: 'text-purple-600', bgColor: 'bg-purple-50' },
     { icon: Briefcase, title: 'Business', count: '4.1K', color: 'text-green-600', bgColor: 'bg-green-50' },
     { icon: GraduationCap, title: 'Research', count: '2.3K', color: 'text-yellow-600', bgColor: 'bg-yellow-50' },
-    { icon: Shield, title: 'Data Science', count: '3.5K', color: 'text-red-600', bgColor: 'bg-red-50' },
+    { icon: BarChart, title: 'Data Science', count: '3.5K', color: 'text-red-600', bgColor: 'bg-red-50' },
     { icon: Globe, title: 'Remote', count: '8.7K', color: 'text-cyan-600', bgColor: 'bg-cyan-50' },
     { icon: Zap, title: 'Startups', count: '6.2K', color: 'text-amber-600', bgColor: 'bg-amber-50' }
   ];
@@ -207,7 +201,7 @@ export default function Home() {
       
       <main className="w-full bg-white font-sans">
         
-        {/* Hero Section - Internshala Style */}
+        {/* Hero Section */}
         <section className="relative bg-gradient-to-b from-blue-50/50 via-white to-white border-b border-gray-100">
           <div className={CONTAINER}>
             <div className="py-12 lg:py-16">
@@ -252,7 +246,7 @@ export default function Home() {
                       </button>
                     </div>
 
-                    {/* App Download Section - Internshala Style */}
+                    {/* App Download Section */}
                     <div className="bg-gray-50 rounded-2xl p-6 max-w-md mx-auto lg:mx-0 border border-gray-200">
                       <p className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
                         <Smartphone className="w-4 h-4" />
@@ -292,7 +286,6 @@ export default function Home() {
                 <div className="flex-1">
                   <FadeUp delay={0.3}>
                     <div className="relative">
-                      {/* Main Hero Image */}
                       <div className="relative rounded-2xl overflow-hidden shadow-xl">
                         <Image 
                           src="/hero.jpg" 
@@ -302,11 +295,9 @@ export default function Home() {
                           className="w-full h-auto object-cover"
                           priority
                         />
-                        {/* Overlay gradient for better text readability if needed */}
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-transparent pointer-events-none" />
                       </div>
                       
-                      {/* Floating Stats Cards */}
                       <motion.div 
                         animate={{ y: [0, -8, 0] }}
                         transition={{ duration: 4, repeat: Infinity }}
@@ -346,7 +337,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stats Bar - Internshala Style */}
+        {/* Stats Bar */}
         <section className="py-10 border-b border-gray-200">
           <div className={CONTAINER}>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
@@ -372,7 +363,7 @@ export default function Home() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-              {featuredInternships.slice(0, 8).map((item, i) => (
+              {featuredInternships?.slice(0, 8).map((item: any, i: number) => (
                 <FadeUp key={item.id} delay={i * 0.05}>
                   <InternshipCard {...item} />
                 </FadeUp>
@@ -403,7 +394,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Resume Builder Banner - Internshala Style */}
+        {/* Resume Builder Banner */}
         <section className="py-12">
           <div className={CONTAINER}>
             <motion.div 
@@ -438,7 +429,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Success Stories - Internshala Style */}
+        {/* Success Stories */}
         <section className="py-16 bg-gray-50">
           <div className={CONTAINER}>
             <div className="mb-10">
