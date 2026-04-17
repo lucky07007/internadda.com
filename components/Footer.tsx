@@ -6,14 +6,9 @@ import {
   Linkedin, 
   Youtube, 
   Instagram, 
-  Globe, 
   Heart, 
   Mail,
   Sparkles,
-  Briefcase,
-  GraduationCap,
-  Newspaper,
-  Award,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
@@ -70,20 +65,20 @@ export function Footer() {
       <div className="pt-12 lg:pt-16 pb-8 lg:pb-10">
         <div className={CONTAINER}>
           
-          {/* Mobile Layout - Center aligned with proper headers */}
+          {/* Mobile Layout - 2 Columns Center Aligned */}
           <div className="block lg:hidden">
-            <div className="space-y-10">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-10">
               {Object.entries(footerLinks).map(([category, links]) => (
                 <div key={category} className="flex flex-col items-center text-center">
-                  <h4 className="font-bold text-sm text-gray-900 dark:text-white mb-5 pb-2 border-b-2 border-sky-500 inline-block">
+                  <h4 className="font-bold text-sm text-gray-900 dark:text-white mb-4 pb-2 border-b-2 border-sky-500 inline-block">
                     {category}
                   </h4>
-                  <ul className="space-y-3 w-full">
+                  <ul className="space-y-2.5 w-full">
                     {links.map((link, i) => (
                       <li key={i}>
                         <Link 
                           href={link.href} 
-                          className="text-[14px] font-medium text-gray-600 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+                          className="text-[13px] font-medium text-gray-600 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
                         >
                           {link.label}
                         </Link>
@@ -161,7 +156,7 @@ export function Footer() {
           </div>
 
           {/* Mobile Brand Section */}
-          <div className="block lg:hidden mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+          <div className="block lg:hidden mt-10 pt-8 border-t border-gray-200 dark:border-gray-800">
             <div className="flex flex-col items-center text-center">
               <Link href="/" className="flex flex-col mb-4">
                 <span className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-none">
