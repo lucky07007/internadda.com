@@ -293,21 +293,6 @@ export function Footer() {
           </div>
         </div>
       </div>
-
-      {/* UpForge Global Banner - Enhanced with metrics */}
-      <div className="bg-gradient-to-r from-sky-50 via-blue-50 to-indigo-50 dark:from-sky-950/20 dark:via-blue-950/20 dark:to-indigo-950/20 border-b border-gray-200 dark:border-gray-800">
-        <div className={CONTAINER}>
-          <div className="flex flex-col lg:flex-row items-center justify-between py-5 gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-sky-500/20">
-                <Globe className="w-6 h-6 text-white" />
-              </div>
-              <div className="text-center lg:text-left">
-                <p className="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">A Proud Member of</p>
-                <p className="text-xl font-bold text-gray-900 dark:text-white">UpForge Global</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Empowering Global Talent Since 2018</p>
-              </div>
-            </div>
             
             {/* Metrics Grid - Now 4 items in a row */}
             <div className="grid grid-cols-4 gap-3 sm:gap-6">
