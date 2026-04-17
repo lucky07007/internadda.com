@@ -3,10 +3,10 @@
 
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { ArrowRight, Verified, MapPin, Building, ChevronRight, Filter, Search, Clock, Briefcase, DollarSign, Calendar, Users, Sparkles, X } from 'lucide-react'
+import { Verified, MapPin, Building, ChevronRight, Filter, Search, Clock, DollarSign, Calendar, Users, Sparkles, X, TrendingUp, History } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
 import { internships as allInternships } from '@/data/internships'
@@ -14,13 +14,11 @@ import { useTheme } from 'next-themes'
 
 const CONTAINER = "max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8"
 
-// Generate random update times for initial load
 const generateUpdateTime = () => {
-  const minutes = Math.floor(Math.random() * 120) // 0-120 minutes ago
+  const minutes = Math.floor(Math.random() * 120)
   return new Date(Date.now() - minutes * 60 * 1000)
 }
 
-// Format relative time
 function getRelativeTime(date: Date): string {
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
@@ -29,28 +27,152 @@ function getRelativeTime(date: Date): string {
   const diffDays = Math.floor(diffHours / 24)
 
   if (diffMins < 1) return 'Just now'
-  if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? '' : 's'} ago`
-  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`
-  if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`
+  if (diffMins < 60) return `${diffMins} min ago`
+  if (diffHours < 24) return `${diffHours} hr ago`
+  if (diffDays < 7) return `${diffDays} day ago`
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+// Search Bar with Suggestions
+function SearchBar({ value, onChange, suggestions, onSelect }: any) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [recentSearches, setRecentSearches] = useState<string[]>([])
+  const inputRef = useRef<HTMLInputElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('recentSearches')
+    if (saved) setRecentSearches(JSON.parse(saved).slice(0, 5))
+  }, [])
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
+          inputRef.current && !inputRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const saveSearch = (term: string) => {
+    if (!term.trim()) return
+    const updated = [term, ...recentSearches.filter(s => s !== term)].slice(0, 5)
+    setRecentSearches(updated)
+    localStorage.setItem('recentSearches', JSON.stringify(updated))
+  }
+
+  const handleSelect = (term: string, item?: any) => {
+    onChange(term)
+    saveSearch(term)
+    setIsOpen(false)
+    if (onSelect && item) onSelect(item)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      saveSearch(value)
+      setIsOpen(false)
+    }
+  }
+
+  const clearRecent = () => {
+    setRecentSearches([])
+    localStorage.removeItem('recentSearches')
+  }
+
+  const trendingSearches = ['Frontend', 'Marketing', 'Data Science', 'Remote', 'Design']
+
+  return (
+    <div className="relative w-full lg:w-96">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Search title, company, skill..."
+          value={value}
+          onChange={(e) => { onChange(e.target.value); setIsOpen(true) }}
+          onFocus={() => setIsOpen(true)}
+          onKeyDown={handleKeyDown}
+          className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent dark:text-white"
+        />
+      </div>
+
+      {isOpen && (value || recentSearches.length > 0) && (
+        <div ref={dropdownRef} className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-xl z-50 overflow-hidden">
+          {value && suggestions.length > 0 && (
+            <div className="p-1">
+              <p className="text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-3 py-1.5">
+                Suggestions
+              </p>
+              {suggestions.slice(0, 6).map((item: any) => (
+                <button
+                  key={item.id}
+                  onClick={() => handleSelect(item.title, item)}
+                  className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded text-left"
+                >
+                  <Search size={13} className="text-gray-400 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.title}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{item.company} • {item.location}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {recentSearches.length > 0 && !value && (
+            <div className="p-1">
+              <div className="flex items-center justify-between px-3 py-1.5">
+                <p className="text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Recent</p>
+                <button onClick={clearRecent} className="text-[10px] text-gray-400 hover:text-gray-600">Clear</button>
+              </div>
+              {recentSearches.map((term, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => { onChange(term); saveSearch(term); setIsOpen(false) }}
+                  className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded"
+                >
+                  <History size={13} className="text-gray-400" />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{term}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {!value && recentSearches.length === 0 && (
+            <div className="p-1">
+              <p className="text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-3 py-1.5">Trending</p>
+              {trendingSearches.map((term, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => { onChange(term); saveSearch(term); setIsOpen(false) }}
+                  className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded"
+                >
+                  <TrendingUp size={13} className="text-orange-400" />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{term}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
 }
 
 function InternshipCard({ id, title, company, stipend, location, duration, skills, applicants, image, tag, lastUpdated }: any) {
   const { user } = useAuth()
   const router = useRouter()
-  const { theme } = useTheme()
   const [relativeTime, setRelativeTime] = useState(() => getRelativeTime(lastUpdated || generateUpdateTime()))
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
     const updateTime = lastUpdated || generateUpdateTime()
-    
-    // Update relative time every minute
-    const interval = setInterval(() => {
-      setRelativeTime(getRelativeTime(updateTime))
-    }, 60000)
-
+    const interval = setInterval(() => setRelativeTime(getRelativeTime(updateTime)), 30000)
     return () => clearInterval(interval)
   }, [lastUpdated])
 
@@ -62,93 +184,62 @@ function InternshipCard({ id, title, company, stipend, location, duration, skill
   if (!mounted) return null
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-gray-900/50 transition-all duration-300 flex flex-col p-5 sm:p-6">
-      {/* Top Section */}
-      <div className="flex justify-between items-start mb-4">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg transition-all">
+      <div className="flex gap-4">
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white leading-tight group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
-              {title}
-            </h3>
+          <div className="flex items-start justify-between mb-2">
+            <div>
+              <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1">{title}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                <Building size={13} /> {company}
+              </p>
+            </div>
+            <div className="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex-shrink-0">
+              <Image src={image} alt={company} width={40} height={40} className="object-cover" />
+            </div>
           </div>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
-            <Building size={14} className="text-gray-400 dark:text-gray-500" /> 
-            {company}
-          </p>
-        </div>
-        <div className="w-14 h-14 relative rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden flex-shrink-0 bg-white dark:bg-gray-700">
-          <Image src={image} alt={company} fill className="object-cover" />
-        </div>
-      </div>
 
-      {/* Tags */}
-      <div className="mb-5 flex flex-wrap gap-2">
-        <span className="bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-          <Verified size={10} /> Verified
-        </span>
-        <span className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold px-2.5 py-1 rounded-full">
-          Actively hiring
-        </span>
-        {tag && (
-          <span className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-[11px] font-semibold px-2.5 py-1 rounded-full">
-            {tag}
-          </span>
-        )}
-      </div>
-
-      {/* Details Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 text-sm bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-        <div>
-          <div className="text-gray-500 dark:text-gray-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center gap-1">
-            <MapPin size={12}/> Location
-          </div>
-          <p className="font-medium text-gray-800 dark:text-gray-200 text-sm">{location}</p>
-        </div>
-        <div>
-          <div className="text-gray-500 dark:text-gray-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center gap-1">
-            <Calendar size={12}/> Duration
-          </div>
-          <p className="font-medium text-gray-800 dark:text-gray-200 text-sm">{duration || '3 Months'}</p>
-        </div>
-        <div>
-          <div className="text-gray-500 dark:text-gray-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center gap-1">
-            <DollarSign size={12}/> Stipend
-          </div>
-          <p className="font-medium text-gray-800 dark:text-gray-200 text-sm">{stipend}</p>
-        </div>
-        <div>
-          <div className="text-gray-500 dark:text-gray-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center gap-1">
-            <Users size={12}/> Applicants
-          </div>
-          <p className="font-medium text-gray-800 dark:text-gray-200 text-sm">{applicants || '120'}+ applied</p>
-        </div>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex flex-wrap gap-2">
-          {skills?.slice(0, 4).map((s: string, idx: number) => (
-            <span key={idx} className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-[11px] font-medium px-2.5 py-1 rounded-md">
-              {s}
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            <span className="bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+              <Verified size={9} /> Verified
             </span>
-          ))}
-          {skills?.length > 4 && (
-            <span className="text-gray-500 dark:text-gray-400 text-[11px] font-medium px-2 py-1">
-              +{skills.length - 4} more
+            {tag && (
+              <span className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-[10px] px-2 py-0.5 rounded-full">{tag}</span>
+            )}
+            <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400 ml-auto">
+              <Clock size={9} /> {relativeTime}
             </span>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-            <Clock size={12} />
-            <span>Updated {relativeTime}</span>
           </div>
-          <button 
-            onClick={go} 
-            className="flex-1 sm:flex-initial bg-sky-500 hover:bg-sky-600 dark:bg-sky-600 dark:hover:bg-sky-700 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition-colors shadow-md shadow-sky-500/20 dark:shadow-sky-600/20 whitespace-nowrap text-center"
-          >
-            View Details
-          </button>
+
+          <div className="grid grid-cols-4 gap-2 mb-3 text-xs">
+            <div>
+              <p className="text-gray-500 dark:text-gray-400 text-[9px] uppercase">Location</p>
+              <p className="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-0.5"><MapPin size={10} /> {location}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400 text-[9px] uppercase">Duration</p>
+              <p className="font-medium text-gray-800 dark:text-gray-200">{duration || '3M'}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400 text-[9px] uppercase">Stipend</p>
+              <p className="font-medium text-gray-800 dark:text-gray-200">{stipend}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400 text-[9px] uppercase">Apply</p>
+              <p className="font-medium text-gray-800 dark:text-gray-200">{applicants || '120'}+</p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex flex-wrap gap-1">
+              {skills?.slice(0, 3).map((s: string, i: number) => (
+                <span key={i} className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] px-2 py-0.5 rounded">{s}</span>
+              ))}
+            </div>
+            <button onClick={go} className="bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-4 py-1.5 rounded-lg">
+              View
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -156,7 +247,6 @@ function InternshipCard({ id, title, company, stipend, location, duration, skill
 }
 
 export default function InternshipsPage() {
-  const { theme } = useTheme()
   const [selectedFilters, setSelectedFilters] = useState<string[]>(['All'])
   const [searchQuery, setSearchQuery] = useState('')
   const [showMobileFilters, setShowMobileFilters] = useState(false)
@@ -165,67 +255,53 @@ export default function InternshipsPage() {
 
   useEffect(() => {
     setMounted(true)
-    // Initialize random update times for all internships
     const times = new Map()
-    allInternships.forEach((_, idx) => {
-      times.set(idx, generateUpdateTime())
-    })
+    allInternships.forEach((_, idx) => times.set(idx, generateUpdateTime()))
     setUpdateTimes(times)
   }, [])
 
-  // Extract all unique categories/tags from internships
   const categories = useMemo(() => {
     const cats = new Set<string>()
-    allInternships.forEach(i => {
-      if (i.tag) cats.add(i.tag)
-    })
+    allInternships.forEach(i => { if (i.tag) cats.add(i.tag) })
     return ['All', ...Array.from(cats).sort()]
   }, [])
 
-  // Filter internships based on selected filters and search
+  const searchSuggestions = useMemo(() => {
+    if (!searchQuery.trim()) return []
+    const q = searchQuery.toLowerCase()
+    return allInternships.filter(i => 
+      i.title.toLowerCase().includes(q) || i.company.toLowerCase().includes(q)
+    ).slice(0, 6)
+  }, [searchQuery])
+
   const filteredInternships = useMemo(() => {
     let filtered = allInternships
-
-    // Filter by category
-    if (!selectedFilters.includes('All') && selectedFilters.length > 0) {
+    if (!selectedFilters.includes('All')) {
       filtered = filtered.filter(i => selectedFilters.includes(i.tag || ''))
     }
-
-    // Filter by search
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase()
+      const q = searchQuery.toLowerCase()
       filtered = filtered.filter(i => 
-        i.title.toLowerCase().includes(query) ||
-        i.company.toLowerCase().includes(query) ||
-        i.location.toLowerCase().includes(query) ||
-        i.skills?.some((s: string) => s.toLowerCase().includes(query))
+        i.title.toLowerCase().includes(q) || i.company.toLowerCase().includes(q) || 
+        i.location.toLowerCase().includes(q) || i.skills?.some((s: string) => s.toLowerCase().includes(q))
       )
     }
-
     return filtered
   }, [selectedFilters, searchQuery])
 
   const toggleFilter = (filter: string) => {
     setSelectedFilters(prev => {
-      if (filter === 'All') {
-        return ['All']
-      }
-      
+      if (filter === 'All') return ['All']
       const withoutAll = prev.filter(f => f !== 'All')
       if (prev.includes(filter)) {
         const newFilters = withoutAll.filter(f => f !== filter)
         return newFilters.length === 0 ? ['All'] : newFilters
-      } else {
-        return [...withoutAll, filter]
       }
+      return [...withoutAll, filter]
     })
   }
 
-  const clearFilters = () => {
-    setSelectedFilters(['All'])
-    setSearchQuery('')
-  }
-
+  const clearFilters = () => { setSelectedFilters(['All']); setSearchQuery('') }
   const activeFilterCount = selectedFilters.includes('All') ? 0 : selectedFilters.length
 
   if (!mounted) return null
@@ -233,198 +309,92 @@ export default function InternshipsPage() {
   return (
     <>
       <Header />
-      <main className="w-full bg-gray-50 dark:bg-gray-900 min-h-screen pt-24 pb-20 font-sans transition-colors duration-200">
+      <main className="w-full bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
         
-        {/* Banner */}
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 py-8 mb-8 transition-colors">
+        {/* Compact Header Bar */}
+        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 py-3 sticky top-16 z-30">
           <div className={CONTAINER}>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">
-                  Internships
-                </h1>
-                <p className="text-gray-600 dark:text-gray-400 font-medium">
-                  Discover opportunities tailored to your skills
-                </p>
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Internships</h1>
+                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                  {filteredInternships.length} open
+                </span>
               </div>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search internships..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full sm:w-80 pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-transparent dark:text-white transition-colors"
-                />
-              </div>
+              <SearchBar 
+                value={searchQuery}
+                onChange={setSearchQuery}
+                suggestions={searchSuggestions}
+              />
             </div>
           </div>
         </div>
 
         <div className={CONTAINER}>
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex gap-5 py-4">
             
-            {/* Mobile Filter Toggle */}
+            {/* Mobile Filter Button */}
             <button
               onClick={() => setShowMobileFilters(!showMobileFilters)}
-              className="lg:hidden flex items-center justify-between w-full bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white font-medium"
+              className="lg:hidden flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm"
             >
-              <span className="flex items-center gap-2">
-                <Filter size={18} className="text-sky-500" />
-                Filters
-                {activeFilterCount > 0 && (
-                  <span className="bg-sky-500 text-white text-xs px-2 py-0.5 rounded-full">
-                    {activeFilterCount}
-                  </span>
-                )}
-              </span>
-              <ChevronRight size={18} className={`transform transition-transform ${showMobileFilters ? 'rotate-90' : ''}`} />
+              <Filter size={14} className="text-sky-500" />
+              Filter
+              {activeFilterCount > 0 && <span className="bg-sky-500 text-white text-xs px-1.5 py-0.5 rounded-full">{activeFilterCount}</span>}
             </button>
 
-            {/* Sidebar Filters */}
-            <aside className={`
-              w-full lg:w-72 flex-shrink-0
-              ${showMobileFilters ? 'block' : 'hidden lg:block'}
-            `}>
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm sticky top-28">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2 text-gray-900 dark:text-white font-bold">
-                    <Filter size={18} className="text-sky-500" /> 
-                    Filters
-                  </div>
+            {/* Sidebar */}
+            <aside className={`w-60 flex-shrink-0 ${showMobileFilters ? 'block' : 'hidden lg:block'}`}>
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 sticky top-28">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-bold text-gray-900 dark:text-white">Categories</span>
                   {activeFilterCount > 0 && (
-                    <button
-                      onClick={clearFilters}
-                      className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 flex items-center gap-1"
-                    >
-                      <X size={12} />
-                      Clear all
-                    </button>
+                    <button onClick={clearFilters} className="text-[10px] text-gray-500 flex items-center gap-0.5"><X size={10} /> Clear</button>
                   )}
                 </div>
-                
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-                      Categories
-                    </label>
-                    <div className="flex flex-col gap-1.5 max-h-96 overflow-y-auto">
-                      {categories.map(filter => {
-                        const isActive = selectedFilters.includes(filter)
-                        const count = filter === 'All' 
-                          ? allInternships.length 
-                          : allInternships.filter(i => i.tag === filter).length
-                        
-                        return (
-                          <button 
-                            key={filter}
-                            onClick={() => toggleFilter(filter)}
-                            className={`
-                              flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all
-                              ${isActive 
-                                ? 'bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 border-l-2 border-sky-500' 
-                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                              }
-                            `}
-                          >
-                            <span>{filter}</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">({count})</span>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Quick Stats */}
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 space-y-2">
-                      <div className="flex justify-between">
-                        <span>Total Internships</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">{allInternships.length}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Verified Companies</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">
-                          {new Set(allInternships.map(i => i.company)).size}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Categories</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">{categories.length - 1}</span>
-                      </div>
-                    </div>
-                  </div>
+                <div className="space-y-0.5 max-h-80 overflow-y-auto">
+                  {categories.map(filter => (
+                    <button 
+                      key={filter}
+                      onClick={() => toggleFilter(filter)}
+                      className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-xs ${selectedFilters.includes(filter) ? 'bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                    >
+                      <span>{filter}</span>
+                      <span className="text-[10px] opacity-60">({filter === 'All' ? allInternships.length : allInternships.filter(i => i.tag === filter).length})</span>
+                    </button>
+                  ))}
                 </div>
               </div>
             </aside>
 
-            {/* Main Listings */}
-            <div className="flex-1 flex flex-col gap-5">
-              {/* Results Header */}
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl shadow-sm">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                      Showing <strong className="text-gray-900 dark:text-white">{filteredInternships.length}</strong> internships
+            {/* Main Content */}
+            <div className="flex-1">
+              {/* Active Filters */}
+              {!selectedFilters.includes('All') && selectedFilters.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {selectedFilters.map(f => (
+                    <span key={f} className="bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                      {f}
+                      <button onClick={() => toggleFilter(f)}><X size={10} /></button>
                     </span>
-                    {selectedFilters.length > 0 && !selectedFilters.includes('All') && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {selectedFilters.map(f => (
-                          <span key={f} className="bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
-                            {f}
-                            <button onClick={() => toggleFilter(f)} className="hover:text-sky-900 dark:hover:text-sky-100">
-                              <X size={12} />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Sparkles size={14} className="text-amber-500" />
-                    <span className="bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                      <Clock size={12} />
-                      Updated live
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Internship Cards */}
-              {filteredInternships.length === 0 ? (
-                <div className="bg-white dark:bg-gray-800 p-16 rounded-2xl border border-gray-200 dark:border-gray-700 text-center shadow-sm">
-                  <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No internships found</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-6">
-                    We couldn't find any positions matching your criteria.
-                  </p>
-                  <button
-                    onClick={clearFilters}
-                    className="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors"
-                  >
-                    Clear all filters
-                  </button>
-                </div>
-              ) : (
-                <>
-                  {filteredInternships.map((item, idx) => (
-                    <InternshipCard 
-                      key={item.id} 
-                      {...item} 
-                      lastUpdated={updateTimes.get(idx)}
-                    />
                   ))}
-                  
-                  {/* Load More Button */}
-                  <div className="text-center pt-8">
-                    <button className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-8 py-3 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors shadow-sm">
-                      Load More Internships
-                    </button>
-                  </div>
-                </>
+                </div>
               )}
+
+              {/* Cards */}
+              <div className="space-y-3">
+                {filteredInternships.length === 0 ? (
+                  <div className="bg-white dark:bg-gray-800 p-10 rounded-xl text-center">
+                    <p className="text-gray-500 dark:text-gray-400">No internships found</p>
+                    <button onClick={clearFilters} className="mt-3 text-sky-500 text-sm">Clear filters</button>
+                  </div>
+                ) : (
+                  filteredInternships.map((item, idx) => (
+                    <InternshipCard key={item.id} {...item} lastUpdated={updateTimes.get(idx)} />
+                  ))
+                )}
+              </div>
             </div>
-            
           </div>
         </div>
       </main>
