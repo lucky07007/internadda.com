@@ -1,3 +1,5 @@
+// components/Header.tsx
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -41,13 +43,23 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // FIXED: Separate body overflow management
   useEffect(() => {
-    setIsOpen(false);
-    document.body.style.overflow = isOpen ? "hidden" : "";
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    
     return () => {
       document.body.style.overflow = "";
     };
-  }, [pathname, isOpen]);
+  }, [isOpen]);
+
+  // FIXED: Close menu on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   const handleSignOut = async () => { 
     await signOut(); 
@@ -61,6 +73,8 @@ export function Header() {
   const userName = user?.user_metadata?.full_name?.split(" ")[0] || "Account";
 
   const closeMobileMenu = () => setIsOpen(false);
+  
+  const toggleMobileMenu = () => setIsOpen(!isOpen);
 
   return (
     <>
@@ -175,31 +189,33 @@ export function Header() {
             )}
           </div>
 
-          {/* Mobile menu button */}
+          {/* FIXED: Mobile menu button with better click handling */}
           <button 
-            className="md:hidden p-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors active:scale-95"
-            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden p-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors active:scale-95 z-[101]"
+            onClick={toggleMobileMenu}
             aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
-        {/* Mobile Menu Overlay */}
-        <div 
-          className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-            isOpen ? "opacity-100 visible" : "opacity-0 invisible"
-          }`}
-          style={{ top: '76px', zIndex: 99 }}
-          onClick={closeMobileMenu}
-        />
+        {/* FIXED: Mobile Menu Overlay - only visible when menu is open */}
+        {isOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm md:hidden"
+            style={{ top: '76px', zIndex: 99 }}
+            onClick={closeMobileMenu}
+            aria-hidden="true"
+          />
+        )}
 
-        {/* Mobile Menu Panel */}
+        {/* FIXED: Mobile Menu Panel - simpler visibility logic */}
         <div 
           className={`fixed top-[76px] left-0 right-0 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 shadow-xl transition-all duration-300 ease-out md:hidden ${
-            isOpen ? "max-h-[calc(100vh-76px)] opacity-100 visible" : "max-h-0 opacity-0 invisible"
+            isOpen ? "translate-y-0 opacity-100 visible" : "-translate-y-4 opacity-0 invisible pointer-events-none"
           }`}
-          style={{ zIndex: 100, overflowY: 'auto' }}
+          style={{ zIndex: 100, maxHeight: 'calc(100vh - 76px)', overflowY: 'auto' }}
         >
           <div className="p-4 space-y-4">
             {/* Mobile Search */}
