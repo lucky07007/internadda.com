@@ -22,27 +22,27 @@ const CONTAINER = "max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8"
 
 const footerLinks = {
   Platform: [
-    { label: 'Internships', href: '/internships', icon: Briefcase },
-    { label: 'Courses', href: '/courses', icon: GraduationCap },
-    { label: 'Journal', href: '/blog', icon: Newspaper },
-    { label: 'Stories', href: '/success-stories', icon: Award },
+    { label: 'Internships', href: '/internships' },
+    { label: 'Courses', href: '/courses' },
+    { label: 'Journal', href: '/blog' },
+    { label: 'Success Stories', href: '/success-stories' },
   ],
   Company: [
-    { label: 'About', href: '/about' },
-    { label: 'Mission', href: '/mission' },
+    { label: 'About Us', href: '/about' },
+    { label: 'Our Mission', href: '/mission' },
     { label: 'Contact', href: '/contact' },
-    { label: 'Help', href: '/help-center' },
+    { label: 'Help Center', href: '/help-center' },
   ],
   Legal: [
-    { label: 'Privacy', href: '/privacy-policy' },
-    { label: 'Terms', href: '/terms-of-service' },
-    { label: 'Cookies', href: '/cookie-policy' },
+    { label: 'Privacy Policy', href: '/privacy-policy' },
+    { label: 'Terms of Service', href: '/terms-of-service' },
+    { label: 'Cookie Policy', href: '/cookie-policy' },
     { label: 'GDPR', href: '/gdpr' },
   ],
   Resources: [
-    { label: 'Hire', href: '/hire' },
-    { label: 'Partner', href: '/partner' },
-    { label: 'Resources', href: '/resources' },
+    { label: 'Hire Interns', href: '/hire' },
+    { label: 'Partner With Us', href: '/partner' },
+    { label: 'Student Resources', href: '/resources' },
     { label: 'FAQ', href: '/faq' },
   ],
 }
@@ -67,26 +67,25 @@ export function Footer() {
   return (
     <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 font-sans transition-colors duration-200">
       
-      <div className="relative z-10 pt-12 lg:pt-16 pb-8 lg:pb-10">
+      <div className="pt-12 lg:pt-16 pb-8 lg:pb-10">
         <div className={CONTAINER}>
           
-          {/* Mobile: 2-column layout */}
-          <div className="block lg:hidden mb-10">
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8">
+          {/* Mobile Layout - Center aligned with proper headers */}
+          <div className="block lg:hidden">
+            <div className="space-y-10">
               {Object.entries(footerLinks).map(([category, links]) => (
-                <div key={category} className="flex flex-col">
-                  <h4 className="font-bold text-xs text-gray-900 dark:text-white mb-4 tracking-wide uppercase opacity-60">
+                <div key={category} className="flex flex-col items-center text-center">
+                  <h4 className="font-bold text-sm text-gray-900 dark:text-white mb-5 pb-2 border-b-2 border-sky-500 inline-block">
                     {category}
                   </h4>
-                  <ul className="space-y-2.5">
+                  <ul className="space-y-3 w-full">
                     {links.map((link, i) => (
                       <li key={i}>
                         <Link 
                           href={link.href} 
-                          className="text-[13px] font-medium text-gray-600 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors inline-flex items-center gap-1.5 group"
+                          className="text-[14px] font-medium text-gray-600 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
                         >
-                          {link.icon && <link.icon className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 transition-opacity" />}
-                          <span>{link.label}</span>
+                          {link.label}
                         </Link>
                       </li>
                     ))}
@@ -96,27 +95,27 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Desktop: Grid layout */}
+          {/* Desktop Layout */}
           <div className="hidden lg:grid grid-cols-12 gap-8 xl:gap-12">
-            {/* Brand */}
+            {/* Brand Column */}
             <div className="col-span-4 flex flex-col">
-              <Link href="/" className="flex flex-col mb-4">
+              <Link href="/" className="flex flex-col mb-5">
                 <span className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-none">
                   InternAdda
                 </span>
                 <div className="flex items-center gap-2 mt-1.5">
                   <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest">
-                    UpForge Global
+                    Powered by UpForge Global
                   </span>
                   <Sparkles className="w-3 h-3 text-sky-500" />
                 </div>
               </Link>
               
-              <p className="text-sm leading-relaxed mb-5 max-w-xs text-gray-600 dark:text-gray-400">
-                Global internships for the next generation.
+              <p className="text-sm leading-relaxed mb-6 max-w-sm text-gray-600 dark:text-gray-400">
+                Connecting students with global internship opportunities across 40+ countries.
               </p>
 
-              <div className="space-y-2 mb-5">
+              <div className="space-y-3 mb-6">
                 <a href="mailto:support@internadda.com" className="flex items-center gap-2.5 text-sm text-gray-600 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors">
                   <Mail className="w-4 h-4" />
                   support@internadda.com
@@ -131,18 +130,18 @@ export function Footer() {
                     target="_blank" 
                     rel="noopener noreferrer" 
                     aria-label={label}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-sky-500 dark:hover:bg-sky-500 text-gray-600 dark:text-gray-400 hover:text-white transition-all"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-sky-500 dark:hover:bg-sky-500 text-gray-600 dark:text-gray-400 hover:text-white transition-all"
                   >
-                    <Icon size={16} />
+                    <Icon size={17} />
                   </a>
                 ))}
               </div>
             </div>
 
-            {/* Links */}
+            {/* Link Columns */}
             {Object.entries(footerLinks).map(([category, links]) => (
               <div key={category} className="col-span-2">
-                <h4 className="font-bold text-xs text-gray-900 dark:text-white mb-5 tracking-wide uppercase opacity-60">
+                <h4 className="font-bold text-sm text-gray-900 dark:text-white mb-5 pb-2 border-b-2 border-sky-500 inline-block">
                   {category}
                 </h4>
                 <ul className="space-y-3">
@@ -161,26 +160,26 @@ export function Footer() {
             ))}
           </div>
 
-          {/* Mobile Brand */}
-          <div className="block lg:hidden mt-8 pt-8 border-t border-gray-200 dark:border-gray-800">
+          {/* Mobile Brand Section */}
+          <div className="block lg:hidden mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
             <div className="flex flex-col items-center text-center">
-              <Link href="/" className="flex flex-col mb-3">
-                <span className="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-none">
+              <Link href="/" className="flex flex-col mb-4">
+                <span className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-none">
                   InternAdda
                 </span>
-                <div className="flex items-center justify-center gap-1.5 mt-1">
-                  <span className="text-[9px] font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest">
-                    UpForge Global
+                <div className="flex items-center justify-center gap-2 mt-1.5">
+                  <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest">
+                    Powered by UpForge Global
                   </span>
-                  <Sparkles className="w-2.5 h-2.5 text-sky-500" />
+                  <Sparkles className="w-3 h-3 text-sky-500" />
                 </div>
               </Link>
               
-              <p className="text-sm mb-4 max-w-xs text-gray-600 dark:text-gray-400">
-                Global internships for the next generation.
+              <p className="text-sm leading-relaxed mb-5 max-w-xs text-gray-600 dark:text-gray-400">
+                Connecting students with global internship opportunities across 40+ countries.
               </p>
 
-              <div className="space-y-2 mb-4 w-full max-w-xs">
+              <div className="space-y-2 mb-5">
                 <a href="mailto:support@internadda.com" className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                   <Mail className="w-4 h-4" />
                   support@internadda.com
@@ -195,9 +194,9 @@ export function Footer() {
                     target="_blank" 
                     rel="noopener noreferrer" 
                     aria-label={label}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-sky-500 dark:hover:bg-sky-500 text-gray-600 dark:text-gray-400 hover:text-white transition-all"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-sky-500 dark:hover:bg-sky-500 text-gray-600 dark:text-gray-400 hover:text-white transition-all"
                   >
-                    <Icon size={16} />
+                    <Icon size={17} />
                   </a>
                 ))}
               </div>
@@ -206,12 +205,12 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom bar - clean and minimal */}
+      {/* Bottom Bar */}
       <div className="border-t border-gray-200 dark:border-gray-800 py-5">
         <div className={CONTAINER}>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              © {year} InternAdda
+              © {year} InternAdda. All rights reserved.
             </p>
             <div className="flex items-center gap-4">
               <Link href="/privacy-policy" className="text-xs text-gray-500 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors">
@@ -225,8 +224,7 @@ export function Footer() {
               </Link>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-              <Heart size={11} className="text-red-500 fill-red-500" /> 
-              Worldwide
+              Made with <Heart size={11} className="text-red-500 fill-red-500" /> for students
             </p>
           </div>
         </div>
