@@ -1,13 +1,13 @@
 "use client"
-// components/globe-hero.tsx — PROFESSIONAL DUAL-THEME GLOBE v5
-// Enterprise-grade orthographic globe with realistic terrain and adaptive theming
+// components/globe-hero.tsx — PURE PROFESSIONAL GLOBE
+// Clean, minimal, authentic globe artwork with smooth animation
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import { Verified, Globe, ArrowRight, Sparkles, MapPin, Building2, Users, Award, TrendingUp } from "lucide-react"
+import { ArrowRight, Sparkles } from "lucide-react"
 import { useTheme } from "next-themes"
 
-// Enhanced continent data with realistic terrain
+// Pure continent data - just the landmasses
 const CONTINENTS: { name: string; lightColor: string; darkColor: string; paths: [number, number][][] }[] = [
   {
     name: "North America",
@@ -82,24 +82,34 @@ const CONTINENTS: { name: string; lightColor: string; darkColor: string; paths: 
   }
 ]
 
-// Premium internship hubs with detailed metrics
+// Pure connection lines - major global hubs
+const CONNECTIONS: [number, number, number, number][] = [
+  [12.97, 77.59, 37.77, -122.41],   // Bangalore - San Francisco
+  [19.07, 72.87, 51.50, -0.12],     // Mumbai - London
+  [28.61, 77.20, 35.68, 139.69],    // Delhi - Tokyo
+  [17.38, 78.48, 1.35, 103.82],     // Hyderabad - Singapore
+  [37.77, -122.41, 40.71, -74.00],  // SF - New York
+  [51.50, -0.12, 52.52, 13.40],     // London - Berlin
+  [35.68, 139.69, 37.56, 126.97],   // Tokyo - Seoul
+  [1.35, 103.82, -33.86, 151.20],   // Singapore - Sydney
+  [25.20, 55.27, 19.07, 72.87],     // Dubai - Mumbai
+  [43.65, -79.38, 51.50, -0.12],    // Toronto - London
+]
+
+// Major city markers only
 const CITIES = [
-  { name: "Bangalore", lat: 12.97, lng: 77.59, region: "India", type: "hub", internships: "2,500+", color: "#ff6b4a" },
-  { name: "Mumbai", lat: 19.07, lng: 72.87, region: "India", type: "hub", internships: "2,100+", color: "#ff6b4a" },
-  { name: "Delhi NCR", lat: 28.61, lng: 77.2, region: "India", type: "hub", internships: "1,800+", color: "#ff6b4a" },
-  { name: "Hyderabad", lat: 17.38, lng: 78.48, region: "India", type: "hub", internships: "1,400+", color: "#ff6b4a" },
-  { name: "San Francisco", lat: 37.77, lng: -122.41, region: "USA", type: "hub", internships: "3,200+", color: "#4a9eff" },
-  { name: "New York", lat: 40.71, lng: -74.0, region: "USA", type: "hub", internships: "2,800+", color: "#4a9eff" },
-  { name: "Austin", lat: 30.26, lng: -97.74, region: "USA", type: "hub", internships: "1,200+", color: "#4a9eff" },
-  { name: "London", lat: 51.5, lng: -0.12, region: "Europe", type: "hub", internships: "2,200+", color: "#9b59b6" },
-  { name: "Berlin", lat: 52.52, lng: 13.4, region: "Europe", type: "hub", internships: "1,500+", color: "#9b59b6" },
-  { name: "Amsterdam", lat: 52.37, lng: 4.9, region: "Europe", type: "hub", internships: "1,100+", color: "#9b59b6" },
-  { name: "Singapore", lat: 1.35, lng: 103.82, region: "SEA", type: "hub", internships: "1,900+", color: "#e74c3c" },
-  { name: "Tokyo", lat: 35.68, lng: 139.69, region: "East Asia", type: "hub", internships: "1,600+", color: "#e74c3c" },
-  { name: "Seoul", lat: 37.56, lng: 126.97, region: "East Asia", type: "hub", internships: "1,300+", color: "#e74c3c" },
-  { name: "Dubai", lat: 25.2, lng: 55.27, region: "Middle East", type: "hub", internships: "1,100+", color: "#f39c12" },
-  { name: "Sydney", lat: -33.86, lng: 151.2, region: "Pacific", type: "hub", internships: "980+", color: "#1abc9c" },
-  { name: "Toronto", lat: 43.65, lng: -79.38, region: "Canada", type: "hub", internships: "1,300+", color: "#4a9eff" },
+  { lat: 12.97, lng: 77.59 },   // Bangalore
+  { lat: 19.07, lng: 72.87 },   // Mumbai
+  { lat: 28.61, lng: 77.20 },   // Delhi
+  { lat: 17.38, lng: 78.48 },   // Hyderabad
+  { lat: 37.77, lng: -122.41 }, // San Francisco
+  { lat: 40.71, lng: -74.00 },  // New York
+  { lat: 51.50, lng: -0.12 },   // London
+  { lat: 52.52, lng: 13.40 },   // Berlin
+  { lat: 1.35, lng: 103.82 },   // Singapore
+  { lat: 35.68, lng: 139.69 },  // Tokyo
+  { lat: -33.86, lng: 151.20 }, // Sydney
+  { lat: 43.65, lng: -79.38 },  // Toronto
 ]
 
 const CX = 220, CY = 220, R = 185
@@ -164,16 +174,13 @@ function buildGrid(rotDeg: number) {
 export function GlobeHero() {
   const { theme } = useTheme()
   const [rotation, setRotation] = useState(45)
-  const [activeCityIdx, setActiveCityIdx] = useState(0)
   const [mounted, setMounted] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState(0)
   const [rotationAtDrag, setRotationAtDrag] = useState(0)
-  const [hoveredCity, setHoveredCity] = useState<number | null>(null)
   const rafRef = useRef<number | null>(null)
   const lastTimeRef = useRef(0)
   const dragRef = useRef(false)
-  const autoRotRef = useRef(true)
 
   const isDark = theme === "dark"
 
@@ -182,10 +189,10 @@ export function GlobeHero() {
   // Smooth auto-rotation
   useEffect(() => {
     const animate = (ts: number) => {
-      if (autoRotRef.current && !dragRef.current) {
+      if (!dragRef.current) {
         const dt = Math.min(ts - lastTimeRef.current, 50)
         lastTimeRef.current = ts
-        setRotation(r => (r + dt * 0.004) % 360)
+        setRotation(r => (r + dt * 0.003) % 360)
       } else {
         lastTimeRef.current = ts
       }
@@ -195,365 +202,203 @@ export function GlobeHero() {
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
   }, [])
 
-  // City highlight cycle
-  useEffect(() => {
-    const id = setInterval(() => {
-      setActiveCityIdx(i => (i + 1) % CITIES.length)
-    }, 3000)
-    return () => clearInterval(id)
-  }, [])
-
   const handleMouseDown = (e: React.MouseEvent) => {
     dragRef.current = true
     setIsDragging(true)
     setDragStart(e.clientX)
     setRotationAtDrag(rotation)
   }
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+  const handleMouseMove = (e: React.MouseEvent) => {
     if (!dragRef.current) return
     const dx = e.clientX - dragStart
     setRotation((rotationAtDrag + dx * 0.4) % 360)
-  }, [dragStart, rotationAtDrag])
+  }
   const handleMouseUp = () => { dragRef.current = false; setIsDragging(false) }
 
   const { meridians, parallels } = buildGrid(rotation)
-  const projCities = CITIES.map((c, i) => ({ ...c, ...project(c.lat, c.lng, rotation), idx: i }))
-    .filter(c => c.visible)
-    .sort((a, b) => a.depth - b.depth)
 
-  const activeCity = CITIES[activeCityIdx]
-  const activeCityProj = project(activeCity.lat, activeCity.lng, rotation)
-
-  // Dynamic colors based on theme
+  // Ocean colors - deep and rich
   const oceanColors = isDark 
-    ? { start: "#0a1628", mid: "#0d1f3c", end: "#071020" }
-    : { start: "#1a6d8f", mid: "#0e5a7a", end: "#063b5a" }
-  
-  const atmosphereColor = isDark 
-    ? "rgba(60,140,220,0.12)" 
-    : "rgba(100,180,220,0.18)"
+    ? { start: "#0a1220", mid: "#0d1a30", end: "#060c18" }
+    : { start: "#1a5a7a", mid: "#0e4a6a", end: "#063a55" }
 
   return (
-    <div className="relative w-full max-w-7xl mx-auto">
-      {/* Main Grid Layout - Rows and Columns Structure */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+    <div className="relative w-full max-w-6xl mx-auto">
+      <div className="flex flex-col items-center">
         
-        {/* Globe Column - 7 cols on desktop */}
-        <div className="lg:col-span-7 flex flex-col items-center justify-center">
-          {/* Globe container */}
-          <div className="relative flex items-center justify-center select-none">
-            
-            {/* Enhanced city label popup */}
-            {mounted && activeCityProj.visible && (
-              <div
-                className="absolute z-20 pointer-events-none"
-                style={{
-                  left: `calc(50% + ${(activeCityProj.x - 220) * 0.9}px + 24px)`,
-                  top: `calc(50% + ${(activeCityProj.y - 220) * 0.9}px - 20px)`,
-                  transition: "left 0.7s cubic-bezier(0.2, 0.9, 0.4, 1), top 0.7s cubic-bezier(0.2, 0.9, 0.4, 1)",
-                }}
-              >
-                <div className="relative animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 bg-white dark:bg-gray-800 border-l border-t border-gray-200 dark:border-gray-700 shadow-sm" />
-                  <div className="text-xs font-semibold px-3 py-2 whitespace-nowrap bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-xl border border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center gap-1.5">
-                      <MapPin size={12} className="text-rose-500" />
-                      <span className="text-gray-900 dark:text-white">{activeCity.name}</span>
-                    </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Building2 size={10} className="text-emerald-500" />
-                      <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
-                        {activeCity.internships} internships
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+        {/* Globe container */}
+        <div className="relative flex items-center justify-center select-none">
+          
+          {/* Subtle drag hint */}
+          {mounted && (
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] tracking-[0.2em] uppercase text-gray-400/60 dark:text-gray-500/60 pointer-events-none">
+              Drag to rotate
+            </div>
+          )}
 
-            {/* Drag hint */}
-            {mounted && (
-              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[9px] tracking-wider uppercase text-gray-400 dark:text-gray-500 pointer-events-none whitespace-nowrap flex items-center gap-1">
-                <span>← Drag to explore →</span>
-              </div>
-            )}
-
-            <svg
-              viewBox="0 0 440 440"
-              className="w-[300px] h-[300px] sm:w-[360px] sm:h-[360px] md:w-[400px] md:h-[400px] lg:w-[440px] lg:h-[440px] drop-shadow-2xl"
-              style={{ cursor: isDragging ? "grabbing" : "grab" }}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              aria-label="Interactive globe showing global internship opportunities"
-            >
-              <defs>
-                {/* Dynamic ocean gradient */}
-                <radialGradient id="oceanGradient" cx="40%" cy="35%" r="65%">
-                  <stop offset="0%" stopColor={oceanColors.start} />
-                  <stop offset="45%" stopColor={oceanColors.mid} />
-                  <stop offset="85%" stopColor={oceanColors.end} />
-                  <stop offset="100%" stopColor={isDark ? "#050a14" : "#043050"} />
-                </radialGradient>
-                
-                {/* Enhanced atmosphere glow */}
-                <radialGradient id="atmosphereGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="80%" stopColor="rgba(0,0,0,0)" />
-                  <stop offset="93%" stopColor={atmosphereColor} />
-                  <stop offset="100%" stopColor={isDark ? "rgba(80,160,220,0.25)" : "rgba(100,180,220,0.35)"} />
-                </radialGradient>
-                
-                {/* Cloud layer */}
-                <radialGradient id="cloudLayer" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                  <stop offset="75%" stopColor="rgba(255,255,255,0)" />
-                  <stop offset="92%" stopColor="rgba(255,255,255,0.04)" />
-                  <stop offset="100%" stopColor="rgba(255,255,255,0.1)" />
-                </radialGradient>
-                
-                {/* Dark side shadow */}
-                <radialGradient id="darkSide" cx="68%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="rgba(0,0,0,0)" />
-                  <stop offset="40%" stopColor="rgba(0,0,0,0.08)" />
-                  <stop offset="100%" stopColor="rgba(0,0,0,0.45)" />
-                </radialGradient>
-                
-                {/* Sun reflection */}
-                <radialGradient id="specular" cx="25%" cy="20%" r="45%">
-                  <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
-                  <stop offset="30%" stopColor="rgba(255,255,255,0.15)" />
-                  <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-                </radialGradient>
-
-                <clipPath id="globeClip">
-                  <circle cx={CX} cy={CY} r={R} />
-                </clipPath>
-                
-                <filter id="cityGlow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="3" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-                
-                <filter id="globeShadow">
-                  <feDropShadow dx="6" dy="12" stdDeviation="16" floodColor={isDark ? "#0a1628" : "#0a4a6a"} floodOpacity="0.25" />
-                </filter>
-
-                <filter id="continentShadow">
-                  <feDropShadow dx="1" dy="1" stdDeviation="2" floodColor="rgba(0,0,0,0.2)" />
-                </filter>
-              </defs>
-
-              {/* Ground shadow */}
-              <ellipse cx="230" cy="418" rx="150" ry="12" fill={isDark ? "#0a1628" : "#0a4a6a"} opacity="0.2" filter="blur(5px)" />
-
-              {/* Ocean base */}
-              <circle cx={CX} cy={CY} r={R} fill="url(#oceanGradient)" filter="url(#globeShadow)" />
-
-              <g clipPath="url(#globeClip)">
-                {/* Atmosphere inner glow */}
-                <circle cx={CX} cy={CY} r={R} fill="url(#atmosphereGlow)" />
-                
-                {/* Continents */}
-                {CONTINENTS.map(continent =>
-                  continent.paths.map((path, pi) => {
-                    const d = polygonToPath(path, rotation)
-                    if (!d) return null
-                    const color = isDark ? continent.darkColor : continent.lightColor
-                    return (
-                      <g key={`${continent.name}-${pi}`}>
-                        <path
-                          d={d}
-                          fill={color}
-                          stroke={isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.1)"}
-                          strokeWidth="0.8"
-                          strokeLinejoin="round"
-                          opacity="0.95"
-                          filter="url(#continentShadow)"
-                        />
-                        {/* Inner highlight for depth */}
-                        <path
-                          d={d}
-                          fill="none"
-                          stroke="rgba(255,255,255,0.12)"
-                          strokeWidth="1"
-                          strokeLinejoin="round"
-                        />
-                      </g>
-                    )
-                  })
-                )}
-
-                {/* Grid lines */}
-                {meridians.map((d, i) => (
-                  <path key={`m${i}`} d={d} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" fill="none" />
-                ))}
-                {parallels.map((d, i) => (
-                  <path key={`p${i}`} d={d} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" fill="none" />
-                ))}
-
-                {/* Enhanced equator */}
-                {(() => {
-                  const eq = parallels.find((_, i) => i === 2)
-                  return eq ? <path d={eq} stroke="rgba(255,215,0,0.15)" strokeWidth="1.5" fill="none" strokeDasharray="6,5" /> : null
-                })()}
-                
-                {/* Cloud patterns */}
-                <ellipse cx="140" cy="120" rx="70" ry="18" fill="white" opacity="0.04" transform="rotate(-20 140 120)" />
-                <ellipse cx="280" cy="260" rx="55" ry="12" fill="white" opacity="0.03" transform="rotate(30 280 260)" />
-                <ellipse cx="100" cy="320" rx="45" ry="10" fill="white" opacity="0.05" transform="rotate(-35 100 320)" />
-                <ellipse cx="320" cy="160" rx="40" ry="8" fill="white" opacity="0.03" transform="rotate(15 320 160)" />
-              </g>
-
-              {/* Dark side overlay */}
-              <circle cx={CX} cy={CY} r={R} fill="url(#darkSide)" />
+          <svg
+            viewBox="0 0 440 440"
+            className="w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] md:w-[400px] md:h-[400px] lg:w-[460px] lg:h-[460px]"
+            style={{ cursor: isDragging ? "grabbing" : "grab" }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            aria-label="Interactive globe showing global connections"
+          >
+            <defs>
+              {/* Ocean gradient */}
+              <radialGradient id="oceanGradient" cx="40%" cy="35%" r="65%">
+                <stop offset="0%" stopColor={oceanColors.start} />
+                <stop offset="45%" stopColor={oceanColors.mid} />
+                <stop offset="85%" stopColor={oceanColors.end} />
+                <stop offset="100%" stopColor={isDark ? "#030812" : "#032840"} />
+              </radialGradient>
               
-              {/* Cloud layer overlay */}
-              <circle cx={CX} cy={CY} r={R} fill="url(#cloudLayer)" />
+              {/* Atmosphere glow */}
+              <radialGradient id="atmosphereGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="82%" stopColor="rgba(0,0,0,0)" />
+                <stop offset="95%" stopColor={isDark ? "rgba(60,140,220,0.08)" : "rgba(80,160,220,0.12)"} />
+                <stop offset="100%" stopColor={isDark ? "rgba(80,160,240,0.15)" : "rgba(100,180,240,0.2)"} />
+              </radialGradient>
+              
+              {/* Dark side shadow */}
+              <radialGradient id="darkSide" cx="68%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="rgba(0,0,0,0)" />
+                <stop offset="45%" stopColor="rgba(0,0,0,0.05)" />
+                <stop offset="100%" stopColor="rgba(0,0,0,0.4)" />
+              </radialGradient>
+              
+              {/* Sun reflection */}
+              <radialGradient id="specular" cx="25%" cy="20%" r="45%">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
+                <stop offset="30%" stopColor="rgba(255,255,255,0.1)" />
+                <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+              </radialGradient>
 
-              {/* City markers */}
-              {mounted && projCities.map(c => {
-                const isActive = c.idx === activeCityIdx
-                const isHovered = c.idx === hoveredCity
-                const isHub = c.type === "hub"
-                const size = isActive ? 6 : isHovered ? 5 : isHub ? 4 : 3
-                return (
-                  <g key={c.name}>
-                    {/* Pulse animation for active city */}
-                    {isActive && (
-                      <>
-                        <circle cx={c.x} cy={c.y} fill={c.color} r={size} opacity="0.25">
-                          <animate attributeName="r" values="5;20;5" dur="2.5s" repeatCount="indefinite" />
-                          <animate attributeName="opacity" values="0.3;0;0.3" dur="2.5s" repeatCount="indefinite" />
-                        </circle>
-                        <circle cx={c.x} cy={c.y} fill="none" stroke={c.color} strokeWidth="1.5" r={size + 4} opacity="0.5">
-                          <animate attributeName="r" values="8;16;8" dur="2.5s" repeatCount="indefinite" />
-                          <animate attributeName="opacity" values="0.5;0;0.5" dur="2.5s" repeatCount="indefinite" />
-                        </circle>
-                      </>
-                    )}
-                    {/* City dot */}
-                    <circle
-                      cx={c.x}
-                      cy={c.y}
-                      r={size}
-                      fill={c.color}
-                      opacity={isActive ? 1 : isHub ? 0.95 : 0.85}
-                      filter={isActive ? "url(#cityGlow)" : undefined}
-                      stroke="rgba(255,255,255,0.5)"
-                      strokeWidth="0.8"
-                      style={{ transition: "r 0.2s ease" }}
+              <clipPath id="globeClip">
+                <circle cx={CX} cy={CY} r={R} />
+              </clipPath>
+              
+              <filter id="globeShadow">
+                <feDropShadow dx="0" dy="8" stdDeviation="20" floodColor={isDark ? "#030812" : "#032840"} floodOpacity="0.3" />
+              </filter>
+
+              {/* Connection line gradient */}
+              <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor={isDark ? "rgba(56,189,248,0)" : "rgba(14,165,233,0)"} />
+                <stop offset="50%" stopColor={isDark ? "rgba(56,189,248,0.6)" : "rgba(14,165,233,0.7)"} />
+                <stop offset="100%" stopColor={isDark ? "rgba(56,189,248,0)" : "rgba(14,165,233,0)"} />
+              </linearGradient>
+            </defs>
+
+            {/* Ground shadow */}
+            <ellipse cx="225" cy="415" rx="140" ry="12" fill={isDark ? "#030812" : "#032840"} opacity="0.15" filter="blur(6px)" />
+
+            {/* Ocean base */}
+            <circle cx={CX} cy={CY} r={R} fill="url(#oceanGradient)" filter="url(#globeShadow)" />
+
+            <g clipPath="url(#globeClip)">
+              {/* Atmosphere inner glow */}
+              <circle cx={CX} cy={CY} r={R} fill="url(#atmosphereGlow)" />
+              
+              {/* Continents - pure landmass */}
+              {CONTINENTS.map(continent =>
+                continent.paths.map((path, pi) => {
+                  const d = polygonToPath(path, rotation)
+                  if (!d) return null
+                  const color = isDark ? continent.darkColor : continent.lightColor
+                  return (
+                    <path
+                      key={`${continent.name}-${pi}`}
+                      d={d}
+                      fill={color}
+                      stroke={isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.06)"}
+                      strokeWidth="0.5"
+                      strokeLinejoin="round"
+                      opacity="0.92"
                     />
-                    {/* Inner bright spot */}
-                    <circle cx={c.x - 1} cy={c.y - 1} r={size * 0.3} fill="rgba(255,255,255,0.7)" />
+                  )
+                })
+              )}
+
+              {/* Subtle grid lines */}
+              {meridians.map((d, i) => (
+                <path key={`m${i}`} d={d} stroke="rgba(255,255,255,0.04)" strokeWidth="0.4" fill="none" />
+              ))}
+              {parallels.map((d, i) => (
+                <path key={`p${i}`} d={d} stroke="rgba(255,255,255,0.04)" strokeWidth="0.4" fill="none" />
+              ))}
+
+              {/* Connection lines - animated */}
+              {mounted && CONNECTIONS.map(([lat1, lng1, lat2, lng2], i) => {
+                const p1 = project(lat1, lng1, rotation)
+                const p2 = project(lat2, lng2, rotation)
+                if (!p1.visible || !p2.visible) return null
+                
+                // Calculate control point for arc
+                const midX = (p1.x + p2.x) / 2
+                const midY = (p1.y + p2.y) / 2
+                const dx = p2.x - p1.x
+                const dy = p2.y - p1.y
+                const dist = Math.sqrt(dx * dx + dy * dy)
+                const arcHeight = Math.min(dist * 0.25, 40)
+                const perpX = -dy / dist * arcHeight
+                const perpY = dx / dist * arcHeight
+                const ctrlX = midX + perpX
+                const ctrlY = midY + perpY
+                
+                return (
+                  <g key={i}>
+                    <path
+                      d={`M${p1.x.toFixed(1)},${p1.y.toFixed(1)} Q${ctrlX.toFixed(1)},${ctrlY.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`}
+                      fill="none"
+                      stroke="url(#connectionGradient)"
+                      strokeWidth="0.8"
+                      strokeDasharray="3,4"
+                      opacity="0.5"
+                    >
+                      <animate attributeName="stroke-dashoffset" from="0" to="-14" dur="3s" repeatCount="indefinite" />
+                    </path>
                   </g>
                 )
               })}
 
-              {/* Globe rim */}
-              <circle cx={CX} cy={CY} r={R} fill="none" stroke={isDark ? "rgba(80,160,220,0.3)" : "rgba(100,180,220,0.5)"} strokeWidth="1.5" />
-              <circle cx={CX} cy={CY} r={R+1} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+              {/* City markers - subtle dots */}
+              {mounted && CITIES.map((city, i) => {
+                const p = project(city.lat, city.lng, rotation)
+                if (!p.visible) return null
+                return (
+                  <g key={i}>
+                    <circle cx={p.x} cy={p.y} r="2.5" fill={isDark ? "#7dd3fc" : "#0284c7"} opacity="0.6" />
+                    <circle cx={p.x} cy={p.y} r="1.2" fill="white" opacity="0.8" />
+                  </g>
+                )
+              })}
+            </g>
 
-              {/* Sun reflection highlight */}
-              <ellipse cx="135" cy="115" rx="65" ry="32" fill="url(#specular)" transform="rotate(-40 135 115)" />
-              <ellipse cx="128" cy="108" rx="25" ry="12" fill="rgba(255,255,255,0.08)" transform="rotate(-40 128 108)" />
-            </svg>
-          </div>
+            {/* Dark side overlay */}
+            <circle cx={CX} cy={CY} r={R} fill="url(#darkSide)" />
 
-          {/* Stats bar - Row layout */}
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-12">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-rose-400 to-orange-400 shadow-sm animate-pulse" />
-              <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">Major Hubs</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 shadow-sm" />
-              <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">Active Cities</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Verified size={11} className="text-indigo-500 dark:text-indigo-400" />
-              <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">UpForge Verified</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Globe size={11} className="text-emerald-500 dark:text-emerald-400" />
-              <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">85+ Countries</span>
-            </div>
-          </div>
+            {/* Globe rim - clean edge */}
+            <circle cx={CX} cy={CY} r={R} fill="none" stroke={isDark ? "rgba(60,140,220,0.15)" : "rgba(14,165,233,0.2)"} strokeWidth="1" />
+            <circle cx={CX} cy={CY} r={R+0.5} fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
+
+            {/* Sun reflection */}
+            <ellipse cx="135" cy="115" rx="60" ry="28" fill="url(#specular)" transform="rotate(-40 135 115)" />
+            <ellipse cx="128" cy="108" rx="22" ry="10" fill="rgba(255,255,255,0.05)" transform="rotate(-40 128 108)" />
+          </svg>
         </div>
 
-        {/* Content Column - 5 cols on desktop */}
-        <div className="lg:col-span-5 space-y-6">
-          {/* Trust Metrics Grid - 2x2 */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gradient-to-br from-sky-50 to-blue-50 dark:from-sky-950/20 dark:to-blue-950/20 rounded-2xl p-4 border border-sky-200/50 dark:border-sky-800/50">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                  <Building2 size={16} className="text-sky-600 dark:text-sky-400" />
-                </div>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">15+</span>
-              </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">Global Offices</p>
-            </div>
-            
-            <div className="bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20 rounded-2xl p-4 border border-emerald-200/50 dark:border-emerald-800/50">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                  <Users size={16} className="text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">50K+</span>
-              </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">Alumni Network</p>
-            </div>
-            
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-2xl p-4 border border-amber-200/50 dark:border-amber-800/50">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                  <Award size={16} className="text-amber-600 dark:text-amber-400" />
-                </div>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">10K+</span>
-              </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">Active Internships</p>
-            </div>
-            
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 rounded-2xl p-4 border border-purple-200/50 dark:border-purple-800/50">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                  <TrendingUp size={16} className="text-purple-600 dark:text-purple-400" />
-                </div>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">94%</span>
-              </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">Placement Rate</p>
-            </div>
-          </div>
-
-          {/* Global Identity Statement */}
-          <div className="bg-white dark:bg-gray-800/50 rounded-2xl p-5 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-start gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center shadow-lg shadow-sky-500/20">
-                <Globe className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="font-bold text-gray-900 dark:text-white mb-1">Global Identity</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                  InternAdda connects students with verified internships across 40+ countries. 
-                  As part of UpForge Global, we maintain the highest standards of quality and trust.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Enhanced CTA */}
+        {/* Simple CTA - clean and minimal */}
+        <div className="mt-8">
           <Link 
             href="/internships" 
-            className="group inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 rounded-xl text-sm font-semibold text-white transition-all shadow-lg shadow-sky-500/25 hover:shadow-xl hover:shadow-sky-500/30"
+            className="group inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-gray-900 rounded-full border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:border-gray-300 dark:hover:border-gray-600 transition-all shadow-sm hover:shadow-md"
           >
-            <Sparkles size={14} className="text-amber-300" />
-            Explore 10,000+ internships worldwide
-            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            <Sparkles size={13} className="text-sky-500" />
+            Explore global opportunities
+            <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>
