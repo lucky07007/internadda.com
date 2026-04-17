@@ -3,17 +3,16 @@
 
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { ArrowRight, Star, MapPin, Clock, Sparkles, CheckCircle, Globe, ChevronRight, Code2, TrendingUp, PenTool, Briefcase, GraduationCap, BarChart, Zap, Users, Shield, Award, FileText, Target, Heart } from 'lucide-react'
+import { ArrowRight, Star, CheckCircle, Sparkles, Shield, Target, Globe, FileText } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/lib/auth-context'
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { internships as featuredInternships } from '@/data/internships'
 import { GlobeHero } from '@/components/globe-hero'
 import { useTheme } from 'next-themes'
-import { ForbesBlogs } from '@/components/forbes/forbes-blogs'
+import { FeaturedInternships } from '@/components/featured-internships'
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -40,85 +39,6 @@ function FadeUp({ children, delay = 0, className = '' }: any) {
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay, ease: 'easeOut' }} className={className}>
       {children}
-    </motion.div>
-  );
-}
-
-function InternshipCard({ id, title, company, stipend, location, duration, skills, applicants, tag, image }: any) {
-  const { user } = useAuth();
-  const router = useRouter();
-  const go = (e: React.MouseEvent) => {
-    e.preventDefault();
-    router.push(user ? `/apply/${id}` : `/auth/signin?callbackUrl=/apply/${id}`);
-  };
-
-  return (
-    <motion.div 
-      whileHover={{ y: -3 }}
-      className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-sky-300 dark:hover:border-sky-600 hover:shadow-md transition-all duration-300 flex flex-col h-full"
-    >
-      <div className="p-4 flex-1 flex flex-col">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex items-center justify-center">
-              <Image src={image} alt={company} width={36} height={36} className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-1">{company}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
-                {location}
-              </p>
-            </div>
-          </div>
-          {tag && (
-            <span className="bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 text-[10px] font-semibold px-2 py-1 rounded-md">
-              {tag}
-            </span>
-          )}
-        </div>
-
-        <h3 className="text-base font-semibold text-gray-900 dark:text-white leading-snug mb-3 line-clamp-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
-          {title}
-        </h3>
-
-        <div className="flex items-center gap-4 mb-3 text-sm">
-          <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
-            <Clock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-            <span>{duration || '3 Months'}</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-gray-900 dark:text-white font-semibold">
-            <span>{stipend}</span>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          {skills?.slice(0, 3).map((skill: string, idx: number) => (
-            <span key={idx} className="text-[10px] font-medium px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded">
-              {skill}
-            </span>
-          ))}
-          {skills?.length > 3 && (
-            <span className="text-[10px] font-medium px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded">
-              +{skills.length - 3}
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100 dark:border-gray-700">
-          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-            <Users className="w-3.5 h-3.5" />
-            <span>{applicants || 120}+ applied</span>
-          </div>
-          <button 
-            onClick={go}
-            className="text-sky-600 dark:text-sky-400 font-semibold text-sm hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-1 group/btn"
-          >
-            Apply
-            <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
-          </button>
-        </div>
-      </div>
     </motion.div>
   );
 }
@@ -206,13 +126,12 @@ export default function Home() {
       
       <main className="w-full bg-white dark:bg-gray-900 font-sans transition-colors duration-200">
         
-        {/* Hero Section - Clean & Minimal */}
+        {/* Hero Section */}
         <section className="relative bg-gradient-to-b from-sky-50/50 via-white to-white dark:from-sky-950/20 dark:via-gray-900 dark:to-gray-900 border-b border-gray-100 dark:border-gray-800">
           <div className={CONTAINER}>
             <div className="py-12 lg:py-16">
               <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
                 
-                {/* Left Content */}
                 <div className="flex-1 text-center lg:text-left">
                   <FadeUp>
                     <div className="inline-flex items-center gap-2 bg-sky-50 dark:bg-sky-900/30 px-3 py-1.5 rounded-full mb-5">
@@ -249,7 +168,6 @@ export default function Home() {
                       </button>
                     </div>
 
-                    {/* Trust Badge */}
                     <div className="mt-6 inline-flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                       <CheckCircle className="w-4 h-4 text-emerald-500" />
                       <span>100% Free for Students · 40+ Countries</span>
@@ -257,7 +175,6 @@ export default function Home() {
                   </FadeUp>
                 </div>
 
-                {/* Right - Globe */}
                 <div className="flex-1">
                   <FadeUp delay={0.3}>
                     <div className="relative flex items-center justify-center min-h-[360px] lg:min-h-[420px]">
@@ -270,41 +187,17 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Featured Opportunities - Now Above Why Choose Us */}
-        <section className="py-14">
+        {/* Featured Opportunities - Forbes Style Design */}
+        <section className="py-12">
           <div className={CONTAINER}>
-            <div className="mb-8">
-              <FadeUp>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-1">
-                      Featured Opportunities
-                    </h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Hand-picked internships from verified companies</p>
-                  </div>
-                  <Link 
-                    href="/internships" 
-                    className="text-sky-600 dark:text-sky-400 font-semibold text-sm hover:text-sky-700 dark:hover:text-sky-300 flex items-center gap-1"
-                  >
-                    View All
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </FadeUp>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {featuredInternships?.slice(0, 4).map((item: any, i: number) => (
-                <FadeUp key={item.id} delay={i * 0.05}>
-                  <InternshipCard {...item} />
-                </FadeUp>
-              ))}
-            </div>
+            <FadeUp>
+              <FeaturedInternships internships={featuredInternships} />
+            </FadeUp>
           </div>
         </section>
 
-        {/* Why Choose Us - Now Below Featured */}
-        <section className="py-14 bg-gray-50 dark:bg-gray-800/30">
+        {/* Why Choose Us */}
+        <section className="py-12 bg-gray-50 dark:bg-gray-800/30">
           <div className={CONTAINER}>
             <div className="mb-8 text-center">
               <FadeUp>
@@ -327,16 +220,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Upforge Intelligence Journal - Forbes Style Blog Section */}
-        <section className="py-14">
-          <div className={CONTAINER}>
-            <FadeUp>
-              <ForbesBlogs />
-            </FadeUp>
-          </div>
-        </section>
-
-        {/* Resume Builder CTA - Clean */}
+        {/* Resume Builder CTA */}
         <section className="py-12">
           <div className={CONTAINER}>
             <motion.div 
@@ -358,7 +242,7 @@ export default function Home() {
         </section>
 
         {/* Student Success Stories */}
-        <section className="py-14 bg-gray-50 dark:bg-gray-800/30">
+        <section className="py-12 bg-gray-50 dark:bg-gray-800/30">
           <div className={CONTAINER}>
             <div className="mb-8 text-center">
               <FadeUp>
