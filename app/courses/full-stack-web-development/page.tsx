@@ -7,9 +7,12 @@ import { CourseHeader } from '../components/CourseHeader'
 import { CourseCurriculum } from '../components/CourseCurriculum'
 import { CourseSidebar } from '../components/CourseSidebar'
 import { CourseInstructor } from '../components/CourseInstructor'
-import { Star, Users, Award, Clock, CheckCircle, Briefcase, Target, Shield, Globe, Code, Terminal, Database, Layout, Sparkles, ChevronRight } from 'lucide-react'
-import { useState } from 'react'
+import { Star, Users, Award, Clock, CheckCircle, Briefcase, Target, Shield, Globe, Code, Terminal, Database, Layout, Sparkles, ChevronRight, FileText, FileCode, Download, Share2, Bookmark, ExternalLink } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/auth-context'
+import Image from 'next/image'
 import type { CourseData } from '../course-data'
 
 const CONTAINER = "max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6"
@@ -265,8 +268,71 @@ const courseData: CourseData = {
 }
 
 export default function FullStackWebDevelopmentCourse() {
+  const router = useRouter()
+  const { user } = useAuth()
   const [isEnrolled, setIsEnrolled] = useState(false)
   const [activeTab, setActiveTab] = useState('curriculum')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    // Check if user is enrolled from localStorage
+    const enrolled = localStorage.getItem(`enrolled_${courseData.id}`)
+    if (enrolled === 'true') setIsEnrolled(true)
+  }, [])
+
+  const handleEnroll = () => {
+    if (!user) {
+      router.push('/auth/signin?callbackUrl=/courses/full-stack-web-development')
+      return
+    }
+    localStorage.setItem(`enrolled_${courseData.id}`, 'true')
+    setIsEnrolled(true)
+  }
+
+  const handleContinueLearning = () => {
+    router.push(`/courses/${courseData.id}/learn`)
+  }
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: courseData.title,
+          text: courseData.tagline,
+          url: window.location.href,
+        })
+      } catch (err) {
+        console.log('Share cancelled')
+      }
+    } else {
+      navigator.clipboard?.writeText(window.location.href)
+      alert('Course link copied to clipboard!')
+    }
+  }
+
+  const handleSave = () => {
+    const saved = localStorage.getItem('saved_courses')
+    const savedCourses = saved ? JSON.parse(saved) : []
+    if (!savedCourses.includes(courseData.id)) {
+      savedCourses.push(courseData.id)
+      localStorage.setItem('saved_courses', JSON.stringify(savedCourses))
+      alert('Course saved to your wishlist!')
+    } else {
+      alert('Course already in your wishlist!')
+    }
+  }
+
+  const handleDownloadResource = (resource: any) => {
+    if (!isEnrolled) {
+      alert('Please enroll in the course to download resources')
+      return
+    }
+    // Handle download logic
+    window.open(resource.url || '#', '_blank')
+  }
+
+  if (!mounted) return null
 
   return (
     <>
@@ -291,15 +357,28 @@ export default function FullStackWebDevelopmentCourse() {
                 </div>
               </div>
 
+              {/* Requirements */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Requirements</h2>
+                <ul className="space-y-2">
+                  {courseData.requirements.map((req, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <div className="w-1.5 h-1.5 bg-sky-500 rounded-full mt-2 flex-shrink-0" />
+                      {req}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               {/* Course Content Tabs */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
                 <div className="border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex gap-6 px-6 pt-4">
+                  <div className="flex gap-6 px-6 pt-4 overflow-x-auto">
                     {['curriculum', 'projects', 'resources', 'faq'].map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`pb-3 text-sm font-semibold capitalize transition-colors ${
+                        className={`pb-3 text-sm font-semibold capitalize transition-colors whitespace-nowrap ${
                           activeTab === tab
                             ? 'text-sky-600 dark:text-sky-400 border-b-2 border-sky-600 dark:border-sky-400'
                             : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
@@ -313,15 +392,18 @@ export default function FullStackWebDevelopmentCourse() {
 
                 <div className="p-6">
                   {activeTab === 'curriculum' && (
-                    <CourseCurriculum curriculum={courseData.curriculum} />
+                    <CourseCurriculum curriculum={courseData.curriculum} isEnrolled={isEnrolled} />
                   )}
                   
                   {activeTab === 'projects' && (
                     <div className="space-y-4">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Build these real-world projects to strengthen your portfolio
+                      </p>
                       {courseData.projects.map((project, idx) => (
                         <div key={idx} className="border border-gray-200 dark:border-gray-700 rounded-xl p-4">
                           <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                            {project.title}
+                            {idx + 1}. {project.title}
                           </h3>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                             {project.description}
@@ -337,8 +419,10 @@ export default function FullStackWebDevelopmentCourse() {
                             <span className="flex items-center gap-1">
                               <Clock size={14} /> {project.duration}
                             </span>
-                            {project.videoId && (
-                              <span className="text-sky-600 dark:text-sky-400">▶ Preview Project</span>
+                            {project.videoId && isEnrolled && (
+                              <button className="text-sky-600 dark:text-sky-400 flex items-center gap-1">
+                                <ExternalLink size={14} /> View Project
+                              </button>
                             )}
                           </div>
                         </div>
@@ -348,20 +432,37 @@ export default function FullStackWebDevelopmentCourse() {
                   
                   {activeTab === 'resources' && (
                     <div className="space-y-3">
-                      {courseData.resources.map((resource, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-                          <div className="flex items-center gap-3">
-                            {resource.icon === 'FileText' ? <FileText size={20} className="text-blue-500" /> : <FileCode size={20} className="text-green-500" />}
-                            <div>
-                              <p className="font-medium text-gray-900 dark:text-white">{resource.name}</p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">{resource.type} • {resource.size}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Downloadable resources for this course
+                      </p>
+                      {courseData.resources.map((resource, idx) => {
+                        const IconComponent = resource.icon === 'FileText' ? FileText : FileCode
+                        return (
+                          <div key={idx} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <div className="flex items-center gap-3">
+                              <IconComponent size={20} className={resource.icon === 'FileText' ? 'text-blue-500' : 'text-green-500'} />
+                              <div>
+                                <p className="font-medium text-gray-900 dark:text-white">{resource.name}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{resource.type} • {resource.size}</p>
+                              </div>
                             </div>
+                            <button 
+                              onClick={() => handleDownloadResource(resource)}
+                              className="text-sky-600 dark:text-sky-400 text-sm font-medium flex items-center gap-1 hover:gap-2 transition-all"
+                            >
+                              <Download size={14} />
+                              Download
+                            </button>
                           </div>
-                          <button className="text-sky-600 dark:text-sky-400 text-sm font-medium">
-                            Download
-                          </button>
+                        )
+                      })}
+                      {!isEnrolled && (
+                        <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                          <p className="text-sm text-amber-800 dark:text-amber-300">
+                            🔒 Enroll in this course to access downloadable resources
+                          </p>
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
                   
@@ -383,7 +484,75 @@ export default function FullStackWebDevelopmentCourse() {
             </div>
 
             {/* Sidebar */}
-            <CourseSidebar course={courseData} isEnrolled={isEnrolled} setIsEnrolled={setIsEnrolled} />
+            <div className="lg:w-96">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden sticky top-20">
+                <div className="relative h-48 bg-gradient-to-br from-slate-800 to-slate-900">
+                  <Image 
+                    src={courseData.image} 
+                    alt={courseData.title} 
+                    fill 
+                    className="object-cover opacity-75"
+                  />
+                </div>
+
+                <div className="p-5">
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-3xl font-bold text-gray-900 dark:text-white">{courseData.price}</span>
+                    <span className="text-gray-400 line-through">{courseData.originalPrice}</span>
+                    <span className="ml-auto bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-bold px-2 py-1 rounded">
+                      100% OFF
+                    </span>
+                  </div>
+
+                  {!isEnrolled ? (
+                    <button 
+                      onClick={handleEnroll}
+                      className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl mb-3 transition-colors"
+                    >
+                      Enroll Now - It's Free
+                    </button>
+                  ) : (
+                    <div className="space-y-2 mb-3">
+                      <button 
+                        onClick={handleContinueLearning}
+                        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-colors"
+                      >
+                        Continue Learning
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2 mb-4">
+                    <button 
+                      onClick={handleSave}
+                      className="flex-1 flex items-center justify-center gap-2 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-gray-700 rounded-lg transition-colors"
+                    >
+                      <Bookmark size={16} />
+                      Save
+                    </button>
+                    <button 
+                      onClick={handleShare}
+                      className="flex-1 flex items-center justify-center gap-2 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-gray-700 rounded-lg transition-colors"
+                    >
+                      <Share2 size={16} />
+                      Share
+                    </button>
+                  </div>
+
+                  <div className="space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <h4 className="font-semibold text-gray-900 dark:text-white">This course includes:</h4>
+                    <ul className="space-y-2">
+                      {courseData.features.map((feature: string, idx: number) => (
+                        <li key={idx} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                          <CheckCircle size={14} className="text-green-500 flex-shrink-0" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
