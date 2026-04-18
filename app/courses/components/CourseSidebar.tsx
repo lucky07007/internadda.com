@@ -1,7 +1,7 @@
 // app/courses/components/CourseSidebar.tsx
 'use client'
 
-import { Award, Clock, Users, Video, FileText, Download, Sparkles, CheckCircle, Globe, Smartphone, Shield } from 'lucide-react'
+import { Award, Clock, Users, Video, FileText, Download, Sparkles, CheckCircle, Globe, Smartphone, Shield, Share2 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import type { CourseData } from '../course-data'
