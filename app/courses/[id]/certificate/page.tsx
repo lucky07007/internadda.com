@@ -3,13 +3,11 @@
 
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { Award, Download, Share2, Linkedin, Twitter, Facebook, Copy, CheckCircle, Sparkles, Globe } from 'lucide-react'
+import { Award, Download, Share2, Linkedin, Twitter, Copy, CheckCircle, Sparkles, Globe } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/lib/auth-context'
-import html2canvas from 'html2canvas'
-import { jsPDF } from 'jspdf'
 
 const CONTAINER = "max-w-[1200px] mx-auto px-3 sm:px-4 lg:px-6"
 
@@ -53,29 +51,40 @@ export default function CertificatePage() {
     })
   }, [user, courseId, router])
 
-  const downloadCertificate = async () => {
-    if (!certificateRef.current) return
-    
-    try {
-      const canvas = await html2canvas(certificateRef.current, {
-        scale: 2,
-        backgroundColor: '#ffffff'
-      })
-      
-      const pdf = new jsPDF({
-        orientation: 'landscape',
-        unit: 'px',
-        format: [canvas.width, canvas.height]
-      })
-      
-      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height)
-      pdf.save(`certificate-${courseId}.pdf`)
-      
-      // Mark certificate as earned
-      localStorage.setItem(`certificate_${courseId}`, 'true')
-    } catch (error) {
-      console.error('Error generating certificate:', error)
+  const downloadCertificate = () => {
+    // Simple download - save as image
+    const certificateData = {
+      ...courseData,
+      downloadDate: new Date().toISOString()
     }
+    
+    // Create downloadable text file with certificate details
+    const content = `
+INTERNADDA CERTIFICATE OF COMPLETION
+=====================================
+Certificate ID: ${certificateData.certificateId}
+Student Name: ${certificateData.studentName}
+Course: ${certificateData.title}
+Completion Date: ${certificateData.completionDate}
+Instructor: ${certificateData.instructor}
+Verified by: UpForge Global
+
+This certificate can be verified at:
+https://internadda.com/verify/${certificateData.certificateId}
+    `
+    
+    const blob = new Blob([content], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `certificate-${courseId}.txt`
+    a.click()
+    URL.revokeObjectURL(url)
+    
+    // Mark certificate as earned
+    localStorage.setItem(`certificate_${courseId}`, 'true')
+    
+    alert('Certificate downloaded! You can also take a screenshot of this page.')
   }
 
   const shareCertificate = (platform: string) => {
@@ -83,9 +92,9 @@ export default function CertificatePage() {
     const text = `I just earned my ${courseData?.title} certificate from InternAdda! 🎓`
     
     const shareUrls: any = {
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
     }
     
     if (shareUrls[platform]) {
@@ -116,7 +125,7 @@ export default function CertificatePage() {
               Your Certificate is Ready! 🎉
             </h1>
             <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              You've successfully completed {courseData.title}. Download your certificate and share your achievement with the world!
+              You've successfully completed {courseData.title}. Download your certificate and share your achievement!
             </p>
           </div>
 
@@ -132,46 +141,46 @@ export default function CertificatePage() {
               <div className="absolute inset-6 border border-amber-200 rounded-lg" />
               
               {/* Content */}
-              <div className="relative h-full flex flex-col items-center justify-center p-12 text-center">
+              <div className="relative h-full flex flex-col items-center justify-center p-8 sm:p-12 text-center">
                 {/* Logo */}
                 <div className="mb-6">
-                  <span className="text-3xl font-black text-sky-600">InternAdda</span>
+                  <span className="text-2xl sm:text-3xl font-black text-sky-600">InternAdda</span>
                   <span className="block text-xs text-gray-500 uppercase tracking-widest mt-1">Powered by UpForge Global</span>
                 </div>
 
                 {/* Certificate Title */}
-                <h2 className="text-4xl font-serif text-gray-800 mb-2">Certificate of Completion</h2>
+                <h2 className="text-3xl sm:text-4xl font-serif text-gray-800 mb-2">Certificate of Completion</h2>
                 <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent mb-6" />
 
                 {/* Presented to */}
-                <p className="text-gray-500 text-sm uppercase tracking-wider mb-2">This certificate is presented to</p>
-                <h3 className="text-3xl font-bold text-gray-900 mb-4">{courseData.studentName}</h3>
+                <p className="text-gray-500 text-xs sm:text-sm uppercase tracking-wider mb-2">This certificate is presented to</p>
+                <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">{courseData.studentName}</h3>
                 
                 {/* For completing */}
-                <p className="text-gray-600 mb-2">for successfully completing the course</p>
-                <h4 className="text-2xl font-bold text-sky-600 mb-6">{courseData.title}</h4>
+                <p className="text-gray-600 text-sm mb-2">for successfully completing the course</p>
+                <h4 className="text-xl sm:text-2xl font-bold text-sky-600 mb-6">{courseData.title}</h4>
 
                 {/* Date and Certificate ID */}
-                <div className="grid grid-cols-2 gap-8 mb-8">
+                <div className="grid grid-cols-2 gap-4 sm:gap-8 mb-8">
                   <div>
                     <p className="text-xs text-gray-500 uppercase tracking-wider">Date of Completion</p>
-                    <p className="font-semibold text-gray-800">{courseData.completionDate}</p>
+                    <p className="font-semibold text-gray-800 text-sm sm:text-base">{courseData.completionDate}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 uppercase tracking-wider">Certificate ID</p>
-                    <p className="font-mono text-sm text-gray-800">{courseData.certificateId}</p>
+                    <p className="font-mono text-xs sm:text-sm text-gray-800">{courseData.certificateId}</p>
                   </div>
                 </div>
 
                 {/* Signatures */}
-                <div className="flex items-center justify-center gap-12">
+                <div className="flex items-center justify-center gap-8 sm:gap-12">
                   <div className="text-center">
-                    <div className="w-32 h-0.5 bg-gray-300 mb-1" />
+                    <div className="w-24 sm:w-32 h-0.5 bg-gray-300 mb-1" />
                     <p className="text-sm font-semibold text-gray-800">{courseData.instructor}</p>
                     <p className="text-xs text-gray-500">Course Instructor</p>
                   </div>
                   <div className="text-center">
-                    <div className="w-32 h-0.5 bg-gray-300 mb-1" />
+                    <div className="w-24 sm:w-32 h-0.5 bg-gray-300 mb-1" />
                     <p className="text-sm font-semibold text-gray-800">UpForge Global</p>
                     <p className="text-xs text-gray-500">Verified by</p>
                   </div>
@@ -179,7 +188,7 @@ export default function CertificatePage() {
 
                 {/* Verification Badge */}
                 <div className="absolute bottom-4 right-4">
-                  <Image src="/certificate.jpg" alt="Verified" width={60} height={60} className="opacity-50" />
+                  <Award className="w-12 h-12 text-amber-400 opacity-30" />
                 </div>
               </div>
             </div>
@@ -192,7 +201,7 @@ export default function CertificatePage() {
               className="flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-sky-500/25 transition-all"
             >
               <Download size={18} />
-              Download Certificate (PDF)
+              Download Certificate
             </button>
             
             <button
@@ -220,6 +229,11 @@ export default function CertificatePage() {
             </button>
           </div>
 
+          {/* Note */}
+          <p className="text-center text-xs text-gray-500 dark:text-gray-400 mt-4">
+            📸 You can also take a screenshot of this certificate for your records
+          </p>
+
           {/* What's Next */}
           <div className="mt-12 p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 max-w-3xl mx-auto">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
@@ -230,17 +244,17 @@ export default function CertificatePage() {
               <button className="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-xl hover:bg-sky-100 dark:hover:bg-sky-900/30 transition-colors text-left">
                 <Globe className="w-5 h-5 text-sky-600 dark:text-sky-400 mb-2" />
                 <p className="font-semibold text-gray-900 dark:text-white">Browse More Courses</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Continue your learning journey</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Continue learning</p>
               </button>
               <button className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors text-left">
                 <Award className="w-5 h-5 text-green-600 dark:text-green-400 mb-2" />
                 <p className="font-semibold text-gray-900 dark:text-white">Add to LinkedIn</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Showcase on your profile</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Showcase on profile</p>
               </button>
               <button className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors text-left">
                 <Share2 className="w-5 h-5 text-purple-600 dark:text-purple-400 mb-2" />
                 <p className="font-semibold text-gray-900 dark:text-white">Share Achievement</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Let your network know</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Let network know</p>
               </button>
             </div>
           </div>
