@@ -9,8 +9,8 @@ import { CourseInstructor } from '../components/CourseInstructor'
 import { CheckCircle, Play, FileText, FileCode, Download, Award, ChevronRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/lib/auth-context'
-import { getCourseById } from '@/app/data/courses'
+import { useAuth } from '@/lib/auth-context'  
+import { getCourseById } from '@/data/courses'
 
 const CONTAINER = "max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6"
 
