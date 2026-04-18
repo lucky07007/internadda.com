@@ -7,24 +7,22 @@ import { CourseHeader } from '../components/CourseHeader'
 import { CourseCurriculum } from '../components/CourseCurriculum'
 import { CourseSidebar } from '../components/CourseSidebar'
 import { CourseInstructor } from '../components/CourseInstructor'
-import { Star, Users, Award, Clock, CheckCircle, Briefcase, Target, Shield, Globe, Code, Terminal, Database, Layout, Sparkles, ChevronRight, FileText, FileCode, Download, Share2, Bookmark, ExternalLink, BookOpen, Play, Lock } from 'lucide-react'
+import { CheckCircle, Play, FileText, FileCode, Download, Award, ChevronRight, Clock, Users, Star } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import Image from 'next/image'
-import type { CourseData } from '../course-data'
 
 const CONTAINER = "max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6"
 
-const courseData: CourseData = {
+const courseData = {
   id: 'full-stack-web-development',
   title: 'Full Stack Web Development',
-  tagline: 'Master MERN Stack from Scratch - Build 5 Real Projects',
+  tagline: 'Master MERN Stack from Scratch - Build Real Projects',
   category: 'Development',
   level: 'Beginner to Advanced',
-  duration: '24 Weeks',
-  totalHours: '180+ hours',
+  duration: '12 Weeks',
+  totalHours: '120+ hours',
   students: 15420,
   rating: 4.8,
   reviews: 2340,
@@ -37,9 +35,9 @@ const courseData: CourseData = {
     students: '50K+',
     rating: 4.9,
     courses: 8,
-    bio: 'Ex-Microsoft engineer with 12+ years of experience in full-stack development. Helped 50,000+ students launch their tech careers. Specialized in MERN stack and cloud architecture.'
+    bio: 'Ex-Microsoft engineer with 12+ years of experience in full-stack development. Helped 50,000+ students launch their tech careers.'
   },
-  skills: ['React 18', 'Node.js', 'MongoDB', 'Express', 'JavaScript', 'TypeScript', 'Redux', 'REST APIs', 'GraphQL', 'AWS', 'Docker', 'Git'],
+  skills: ['React', 'Node.js', 'MongoDB', 'Express', 'JavaScript', 'TypeScript', 'Redux', 'REST APIs'],
   price: 'Free',
   originalPrice: '₹19,999',
   badge: 'Bestseller',
@@ -47,217 +45,297 @@ const courseData: CourseData = {
   enrolled: 12450,
   language: 'English & Hindi',
   certificate: true,
-  features: ['Lifetime Access', 'Downloadable Resources', 'Mobile & TV Access', 'Certificate', '30-Day Guarantee'],
-  videoTrailer: 'dQw4w9WgXcQ',
+  features: ['Lifetime Access', 'Downloadable Resources', 'Certificate', 'Projects', '30-Day Guarantee'],
   whatYouWillLearn: [
     'Build full-stack web applications using MERN stack',
     'Create RESTful APIs with Node.js and Express',
-    'Design responsive UIs with React 18 and Tailwind CSS',
+    'Design responsive UIs with React 18 and Tailwind',
     'Implement secure authentication using JWT',
-    'Deploy applications to AWS and Vercel',
     'Master MongoDB for database management',
-    'Use Git for version control',
-    'Build 5 real-world portfolio projects'
+    'Deploy applications to AWS and Vercel'
   ],
   requirements: [
     'Basic computer skills',
     'No prior programming experience needed',
-    'A computer with internet connection',
-    'Willingness to learn and practice'
-  ],
-  projects: [
-    {
-      title: 'E-Commerce Platform',
-      description: 'Build a full-featured online store with product listings, cart, checkout, payment integration (Stripe), user profiles, and admin dashboard.',
-      skills: ['React', 'Node.js', 'MongoDB', 'Stripe', 'Redux'],
-      duration: '4 weeks',
-      videoId: 'ECOMMERCE_VIDEO_ID'
-    },
-    {
-      title: 'Social Media Dashboard',
-      description: 'Create a real-time analytics dashboard with data visualization and real-time updates.',
-      skills: ['React', 'Socket.io', 'Chart.js', 'Express'],
-      duration: '3 weeks',
-      videoId: 'DASHBOARD_VIDEO_ID'
-    },
-    {
-      title: 'Task Management App',
-      description: 'Develop a Trello-like project management tool with drag-drop interface.',
-      skills: ['React', 'Redux', 'Node.js', 'PostgreSQL'],
-      duration: '3 weeks',
-      videoId: 'TASK_APP_VIDEO_ID'
-    },
-    {
-      title: 'Blog Platform with CMS',
-      description: 'Build a content management system with markdown support.',
-      skills: ['Next.js', 'MongoDB', 'AWS S3', 'Tailwind'],
-      duration: '3 weeks',
-      videoId: 'BLOG_CMS_VIDEO_ID'
-    },
-    {
-      title: 'Real-time Chat Application',
-      description: 'Create a WhatsApp-like chat app with WebSockets.',
-      skills: ['React Native', 'Socket.io', 'Node.js', 'Redis'],
-      duration: '4 weeks',
-      videoId: 'CHAT_APP_VIDEO_ID'
-    }
+    'Computer with internet connection'
   ],
   curriculum: [
     {
       week: 1,
-      title: 'Web Development Fundamentals',
-      description: 'Master HTML5, CSS3, and responsive design.',
+      title: 'Introduction to MERN Stack & Environment Setup',
+      description: 'Master the fundamentals and set up your development environment.',
       topics: [
-        'Introduction to Web Development',
-        'HTML5 Semantic Elements',
-        'CSS3 Flexbox and Grid',
-        'Responsive Design Principles',
-        'JavaScript Basics'
+        'What is MERN Stack? MongoDB, Express, React, Node.js',
+        'Single Language Mastery: JavaScript everywhere',
+        'Installing Node.js and npm',
+        'Setting up MongoDB Atlas (Cloud Database)',
+        'Creating folder structure for MERN projects',
+        'Understanding package.json and dependencies'
       ],
       readingContent: `
-        <h3>📚 Week 1: Web Development Fundamentals - Complete Reading Material</h3>
-        
-        <h4>Introduction to Web Development</h4>
-        <p>Web development is the process of building and maintaining websites. It involves two main parts:</p>
-        <ul>
-          <li><strong>Frontend Development:</strong> What users see and interact with (HTML, CSS, JavaScript)</li>
-          <li><strong>Backend Development:</strong> Server-side logic, databases, and APIs (Node.js, Python, Java)</li>
-        </ul>
-        
-        <h4>How the Internet Works</h4>
-        <p>When you type a URL in your browser:</p>
-        <ol>
-          <li>Browser sends a request to DNS server to find IP address</li>
-          <li>Request goes to the web server hosting the website</li>
-          <li>Server processes request and sends back HTML, CSS, JavaScript files</li>
-          <li>Browser renders these files into the webpage you see</li>
-        </ol>
-        
-        <h4>HTML5 Fundamentals</h4>
-        <p>HTML (HyperText Markup Language) is the backbone of every webpage. Key concepts:</p>
-        <ul>
-          <li><strong>Elements:</strong> Building blocks like &lt;div&gt;, &lt;p&gt;, &lt;h1&gt;</li>
-          <li><strong>Attributes:</strong> Provide additional info like class, id, src</li>
-          <li><strong>Semantic HTML:</strong> &lt;header&gt;, &lt;nav&gt;, &lt;main&gt;, &lt;article&gt;, &lt;footer&gt;</li>
-        </ul>
-        <pre><code>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;&lt;title&gt;My First Page&lt;/title&gt;&lt;/head&gt;
-&lt;body&gt;
-  &lt;header&gt;Welcome to my website&lt;/header&gt;
-  &lt;main&gt;This is the main content&lt;/main&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-        
-        <h4>CSS3 Mastery</h4>
-        <p>CSS (Cascading Style Sheets) controls the visual presentation. Modern CSS features:</p>
-        <ul>
-          <li><strong>Flexbox:</strong> One-dimensional layout for rows or columns</li>
-          <li><strong>Grid:</strong> Two-dimensional layout system</li>
-          <li><strong>Media Queries:</strong> Responsive design for different screen sizes</li>
-        </ul>
-        <pre><code>.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-xl font-bold mb-4">📚 Week 1: Introduction to MERN Stack & Environment Setup</h3>
+            
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-6">
+              <p class="font-semibold text-blue-800 dark:text-blue-300">Why MERN Stack?</p>
+              <p class="text-gray-700 dark:text-gray-300 mt-2">Confused by the "alphabet soup" of modern web development? You're not alone. The MERN Stack uses JavaScript from start to finish, eliminating the need to learn separate languages for frontend and backend.</p>
+            </div>
 
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}</code></pre>
-        
-        <h4>Practice Exercise</h4>
-        <p>Create a responsive navigation bar with logo on left and menu items on right. Use flexbox.</p>
+            <h4 class="font-bold mt-6 mb-3">Why Students Learn MERN Stack?</h4>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+              <li><strong>Single Language Mastery:</strong> Only JavaScript needed for frontend (React), backend (Node/Express), and database queries (MongoDB)</li>
+              <li><strong>High Market Demand:</strong> Used by Netflix, Airbnb, Uber for building fast SPAs</li>
+              <li><strong>Faster Development:</strong> React components and NPM ecosystem speed up development</li>
+              <li><strong>Lucrative Salary:</strong> Freshers earn ₹4-7 LPA with rapid growth</li>
+              <li><strong>Huge Community:</strong> Millions of developers worldwide for support</li>
+            </ul>
+
+            <h4 class="font-bold mt-6 mb-3">Step 1: Installing Node.js</h4>
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code># Download LTS version from nodejs.org
+# Verify installation:
+node -v
+npm -v</code></pre>
+
+            <h4 class="font-bold mt-6 mb-3">Step 2: Database Setup (MongoDB Atlas)</h4>
+            <ol class="list-decimal pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+              <li>Sign up at mongodb.com</li>
+              <li>Create a 'Shared Cluster' (Free tier)</li>
+              <li>Add your IP address in Network Access</li>
+              <li>Create database user with password</li>
+              <li>Click "Connect → Drivers" to get connection string</li>
+            </ol>
+
+            <h4 class="font-bold mt-6 mb-3">Step 3: Folder Structure</h4>
+            <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code>mkdir mern-tutorial && cd mern-tutorial
+mkdir server client</code></pre>
+
+            <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg mt-6">
+              <p class="font-semibold text-green-800 dark:text-green-300">✅ Practice Exercise:</p>
+              <p class="text-gray-700 dark:text-gray-300">Set up your development environment and create the folder structure. Verify Node.js and MongoDB Atlas are working correctly.</p>
+            </div>
+          </div>
+        </div>
       `,
-      projects: ['Personal Portfolio Website'],
+      projects: ['Environment Setup Verification'],
       duration: '5 lessons',
       videoHours: '8 hours',
-      videoId: 'dQw4w9WgXcQ',
+      videoId: '7CqJlxBYj-M',
       isPreview: true
     },
     {
       week: 2,
-      title: 'JavaScript Deep Dive',
-      description: 'Master JavaScript from basics to advanced.',
+      title: 'Backend Development with Node.js & Express',
+      description: 'Build robust APIs with Node.js and Express framework.',
       topics: [
-        'Advanced JavaScript Concepts',
-        'Asynchronous Programming',
-        'ES6+ Features',
-        'Error Handling',
-        'Working with APIs'
+        'Initialize Node.js server with npm init',
+        'Express framework setup and routing',
+        'Mongoose ODM for MongoDB connection',
+        'Environment variables with dotenv',
+        'CORS and middleware configuration',
+        'Creating RESTful API endpoints'
       ],
       readingContent: `
-        <h3>📚 Week 2: JavaScript Deep Dive</h3>
-        
-        <h4>JavaScript Fundamentals</h4>
-        <p>JavaScript is a programming language that adds interactivity to websites.</p>
-        
-        <h4>Variables and Data Types</h4>
-        <pre><code>// Modern JavaScript uses let and const
-let name = "John";        // Can be reassigned
-const age = 25;           // Cannot be reassigned
+        <div class="space-y-6">
+          <h3 class="text-xl font-bold mb-4">📚 Week 2: Backend Development with Node.js & Express</h3>
+          
+          <h4 class="font-bold mt-4 mb-3">Initialize Server</h4>
+          <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code>cd server
+npm init -y
+npm install express mongoose cors dotenv
+npm install --save-dev nodemon</code></pre>
 
-// Data types
-let string = "Hello";      // String
-let number = 42;           // Number
-let boolean = true;        // Boolean
-let array = [1, 2, 3];     // Array
-let object = {name: "John", age: 25}; // Object</code></pre>
-        
-        <h4>Functions</h4>
-        <pre><code>// Traditional function
-function greet(name) {
-  return "Hello " + name;
-}
+          <h4 class="font-bold mt-6 mb-3">Create Entry Point (server.js)</h4>
+          <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code>const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
-// Arrow function (ES6)
-const greet = (name) => "Hello " + name;
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-// Higher-order function
-const numbers = [1, 2, 3, 4, 5];
-const doubled = numbers.map(n => n * 2); // [2, 4, 6, 8, 10]</code></pre>
-        
-        <h4>Asynchronous JavaScript</h4>
-        <pre><code>// Promises
-fetch('https://api.example.com/data')
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error(error));
+const PORT = process.env.PORT || 5000;
+const URI = process.env.MONGO_URI;
 
-// Async/Await (modern approach)
-async function getData() {
-  try {
-    const response = await fetch('https://api.example.com/data');
-    const data = await response.json();
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}</code></pre>
-        
-        <h4>Practice: Build a Weather App</h4>
-        <p>Use the OpenWeatherMap API to fetch and display weather data for a city.</p>
+mongoose.connect(URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
+
+app.listen(PORT, () => {
+  console.log(\`Server running on port: \${PORT}\`);
+});</code></pre>
+
+          <h4 class="font-bold mt-6 mb-3">Define Data Model (models/Task.js)</h4>
+          <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code>const mongoose = require('mongoose');
+
+const taskSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: String,
+  completed: { type: Boolean, default: false }
+});
+
+module.exports = mongoose.model('Task', taskSchema);</code></pre>
+
+          <div class="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg mt-6">
+            <p class="font-semibold text-amber-800 dark:text-amber-300">💡 Key Concepts:</p>
+            <ul class="list-disc pl-5 text-gray-700 dark:text-gray-300">
+              <li>Express: Web framework for API development</li>
+              <li>Mongoose: MongoDB object modeling</li>
+              <li>Dotenv: Stores sensitive configuration</li>
+              <li>Nodemon: Auto-restarts server on changes</li>
+            </ul>
+          </div>
+        </div>
       `,
-      projects: ['Interactive Quiz Application'],
+      projects: ['Task API with CRUD Operations'],
       duration: '6 lessons',
       videoHours: '10 hours',
-      videoId: 'dQw4w9WgXcQ'
+      videoId: 'Oe421EPjeBE'
+    },
+    {
+      week: 3,
+      title: 'React Frontend Fundamentals',
+      description: 'Build dynamic user interfaces with React.',
+      topics: [
+        'Creating React app with Vite',
+        'Components, Props, and JSX',
+        'State management with useState',
+        'Side effects with useEffect',
+        'Axios for API integration',
+        'Displaying data from backend'
+      ],
+      readingContent: `
+        <div class="space-y-6">
+          <h3 class="text-xl font-bold mb-4">📚 Week 3: React Frontend Fundamentals</h3>
+          
+          <h4 class="font-bold mt-4 mb-3">Bootstrap React with Vite</h4>
+          <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code>cd client
+npm create vite@latest . -- --template react
+npm install axios
+npm run dev</code></pre>
+
+          <h4 class="font-bold mt-6 mb-3">Fetch Data in React (App.jsx)</h4>
+          <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code>import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+function App() {
+  const [tasks, setTasks] = useState([]);
+  
+  useEffect(() => {
+    axios.get('http://localhost:5000/tasks')
+      .then(res => setTasks(res.data))
+      .catch(err => console.error(err));
+  }, []);
+  
+  return (
+    <div className="App">
+      <h1>My MERN Tasks</h1>
+      <ul>
+        {tasks.map(task => (
+          <li key={task._id}>{task.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;</code></pre>
+
+          <h4 class="font-bold mt-6 mb-3">Real-World MERN Applications</h4>
+          <div class="grid md:grid-cols-3 gap-4 mt-4">
+            <div class="border p-4 rounded-lg">
+              <p class="font-semibold">📋 Trello Clone</p>
+              <p class="text-sm text-gray-600">React drag-drop + Node.js WebSockets</p>
+            </div>
+            <div class="border p-4 rounded-lg">
+              <p class="font-semibold">🛒 E-Commerce</p>
+              <p class="text-sm text-gray-600">React cart + Stripe payments</p>
+            </div>
+            <div class="border p-4 rounded-lg">
+              <p class="font-semibold">🎬 Netflix Clone</p>
+              <p class="text-sm text-gray-600">React streaming + Node.js async</p>
+            </div>
+          </div>
+        </div>
+      `,
+      projects: ['Task Management Frontend'],
+      duration: '6 lessons',
+      videoHours: '10 hours',
+      videoId: 'w7ejDZ8SWv8'
+    },
+    {
+      week: 4,
+      title: 'Full Stack Integration & CRUD Operations',
+      description: 'Connect frontend and backend for complete functionality.',
+      topics: [
+        'Creating POST requests from React',
+        'Handling form submissions',
+        'Update and Delete operations',
+        'State management across components',
+        'Error handling best practices',
+        'Loading states and UX improvements'
+      ],
+      readingContent: `
+        <div class="space-y-6">
+          <h3 class="text-xl font-bold mb-4">📚 Week 4: Full Stack Integration & CRUD</h3>
+          
+          <h4 class="font-bold mt-4 mb-3">Complete CRUD Operations</h4>
+          <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code>// Backend Routes (server.js)
+app.get('/tasks', async (req, res) => {
+  const tasks = await Task.find();
+  res.json(tasks);
+});
+
+app.post('/tasks', async (req, res) => {
+  const task = new Task(req.body);
+  await task.save();
+  res.json(task);
+});
+
+app.delete('/tasks/:id', async (req, res) => {
+  await Task.findByIdAndDelete(req.params.id);
+  res.json({ message: 'Task deleted' });
+});</code></pre>
+
+          <h4 class="font-bold mt-6 mb-3">Frontend CRUD Implementation</h4>
+          <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"><code>const addTask = async (newTask) => {
+  const res = await axios.post('http://localhost:5000/tasks', newTask);
+  setTasks([...tasks, res.data]);
+};
+
+const deleteTask = async (id) => {
+  await axios.delete(\`http://localhost:5000/tasks/\${id}\`);
+  setTasks(tasks.filter(task => task._id !== id));
+};</code></pre>
+
+          <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg mt-6">
+            <p class="font-semibold text-purple-800 dark:text-purple-300">🚀 Pro Tip:</p>
+            <p class="text-gray-700 dark:text-gray-300">Add a "Dark Mode" toggle using React context as an extra challenge!</p>
+          </div>
+        </div>
+      `,
+      projects: ['Complete Task Manager App'],
+      duration: '5 lessons',
+      videoHours: '9 hours',
+      videoId: 'jS4aFq5-91M'
     }
   ],
   resources: [
-    { name: 'Complete Course Slides', type: 'PDF', size: '45 MB', icon: 'FileText', url: '#' },
-    { name: 'All Source Code', type: 'ZIP', size: '120 MB', icon: 'FileCode', url: '#' },
-    { name: 'Project Assets & Designs', type: 'ZIP', size: '250 MB', icon: 'FileCode', url: '#' }
+    { name: 'MERN Stack Cheat Sheet', type: 'PDF', size: '2 MB', icon: 'FileText' },
+    { name: 'Complete Source Code', type: 'ZIP', size: '15 MB', icon: 'FileCode' },
+    { name: 'Postman Collection', type: 'JSON', size: '500 KB', icon: 'FileCode' }
   ],
   faqs: [
-    { q: 'Is this course really free?', a: 'Yes! 100% free as part of our mission.' },
-    { q: 'Do I get a certificate?', a: 'Yes, after completing the course and passing the quiz.' }
+    { q: 'Is MERN backend or frontend?', a: 'MERN is full-stack. React handles frontend, Node.js/Express handle backend, MongoDB stores data.' },
+    { q: 'Can I learn MERN in 1 month?', a: 'With JavaScript knowledge, basics take 30 days. Mastery requires 3-6 months of practice.' },
+    { q: 'Which is better, Node.js or React?', a: 'Neither is "better" - they serve different purposes. React for UI, Node.js for server logic.' },
+    { q: 'Is MERN Stack dead in 2026?', a: 'No! MERN remains #1 choice for startups due to rapid development and JavaScript ecosystem.' },
+    { q: 'Can I learn React without HTML and CSS?', a: 'No. HTML and CSS fundamentals are essential before learning React.' }
   ]
 }
 
-export default function FullStackWebDevelopmentCourse() {
+export default function FullStackCourse() {
   const router = useRouter()
   const { user } = useAuth()
   const [isEnrolled, setIsEnrolled] = useState(false)
@@ -284,17 +362,15 @@ export default function FullStackWebDevelopmentCourse() {
     router.push(`/courses/${courseData.id}/learn`)
   }
 
+  const handleTakeQuiz = () => {
+    router.push(`/courses/${courseData.id}/quiz`)
+  }
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: courseData.title,
-          text: courseData.tagline,
-          url: window.location.href,
-        })
-      } catch (err) {
-        console.log('Share cancelled')
-      }
+        await navigator.share({ title: courseData.title, text: courseData.tagline, url: window.location.href })
+      } catch (err) {}
     } else {
       navigator.clipboard?.writeText(window.location.href)
       alert('Course link copied!')
@@ -311,10 +387,6 @@ export default function FullStackWebDevelopmentCourse() {
     }
   }
 
-  const handleTakeQuiz = () => {
-    router.push(`/courses/${courseData.id}/quiz`)
-  }
-
   if (!mounted) return null
 
   return (
@@ -327,7 +399,6 @@ export default function FullStackWebDevelopmentCourse() {
           <div className="flex flex-col lg:flex-row gap-8 py-8">
             {/* Main Content - Left Side */}
             <div className="flex-1">
-              {/* What You'll Learn */}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">What You'll Learn</h2>
                 <div className="grid md:grid-cols-2 gap-3">
@@ -340,93 +411,87 @@ export default function FullStackWebDevelopmentCourse() {
                 </div>
               </div>
 
-              {/* Course Content Tabs */}
               <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
                 <div className="border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex gap-6 px-6 pt-4 overflow-x-auto">
-                    {['curriculum', 'reading', 'projects', 'resources', 'quiz'].map((tab) => (
+                  <div className="flex gap-4 sm:gap-6 px-4 sm:px-6 pt-4 overflow-x-auto">
+                    {['curriculum', 'reading', 'resources', 'faq', 'quiz'].map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`pb-3 text-sm font-semibold capitalize transition-colors whitespace-nowrap ${
+                        className={`pb-3 text-sm font-semibold capitalize whitespace-nowrap ${
                           activeTab === tab
                             ? 'text-sky-600 dark:text-sky-400 border-b-2 border-sky-600 dark:border-sky-400'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                            : 'text-gray-500 dark:text-gray-400'
                         }`}
                       >
-                        {tab === 'reading' ? '📖 Reading' : tab}
+                        {tab === 'reading' ? '📖 Reading' : tab === 'quiz' ? '📝 Quiz' : tab}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   {activeTab === 'curriculum' && (
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                        Click on any week to view detailed curriculum and reading materials
-                      </p>
-                      <div className="space-y-2">
-                        {courseData.curriculum.map((week) => (
-                          <div key={week.week} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                            <button
-                              onClick={() => setSelectedWeek(selectedWeek === week.week ? null : week.week)}
-                              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                            >
-                              <div className="flex items-center gap-3">
-                                <span className="text-xs font-semibold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 px-2 py-1 rounded">
-                                  Week {week.week}
-                                </span>
-                                <span className="font-semibold text-gray-900 dark:text-white">{week.title}</span>
-                              </div>
-                              <ChevronRight className={`w-4 h-4 transition-transform ${selectedWeek === week.week ? 'rotate-90' : ''}`} />
-                            </button>
-                            
-                            {selectedWeek === week.week && (
-                              <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-900/50">
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{week.description}</p>
-                                <div className="grid md:grid-cols-2 gap-4">
-                                  <div>
-                                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Topics Covered:</h5>
-                                    <ul className="space-y-1">
-                                      {week.topics.map((topic, idx) => (
-                                        <li key={idx} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                                          <span className="w-1 h-1 bg-sky-500 rounded-full mt-2 flex-shrink-0" />
-                                          {topic}
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                  <div>
-                                    <h5 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Details:</h5>
-                                    <p className="text-sm text-gray-700 dark:text-gray-300">📹 {week.duration} • {week.videoHours}</p>
-                                    <p className="text-sm text-gray-700 dark:text-gray-300">📝 Project: {week.projects?.[0]}</p>
-                                    {isEnrolled && (
-                                      <button className="mt-3 text-sky-600 dark:text-sky-400 text-sm font-medium flex items-center gap-1">
-                                        <Play size={14} /> Start Learning
-                                      </button>
-                                    )}
-                                  </div>
+                    <div className="space-y-2">
+                      {courseData.curriculum.map((week) => (
+                        <div key={week.week} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                          <button
+                            onClick={() => setSelectedWeek(selectedWeek === week.week ? null : week.week)}
+                            className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs font-semibold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 px-2 py-1 rounded">
+                                Week {week.week}
+                              </span>
+                              <span className="font-semibold text-gray-900 dark:text-white text-left">{week.title}</span>
+                            </div>
+                            <ChevronRight className={`w-4 h-4 transition-transform ${selectedWeek === week.week ? 'rotate-90' : ''}`} />
+                          </button>
+                          
+                          {selectedWeek === week.week && (
+                            <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-900/50">
+                              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{week.description}</p>
+                              <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                  <h5 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Topics:</h5>
+                                  <ul className="space-y-1">
+                                    {week.topics.map((topic, idx) => (
+                                      <li key={idx} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
+                                        <span className="w-1 h-1 bg-sky-500 rounded-full mt-2 flex-shrink-0" />
+                                        {topic}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                                <div>
+                                  <h5 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Details:</h5>
+                                  <p className="text-sm text-gray-700 dark:text-gray-300">📹 {week.duration} • {week.videoHours}</p>
+                                  <p className="text-sm text-gray-700 dark:text-gray-300">📝 {week.projects?.[0]}</p>
+                                  {isEnrolled && (
+                                    <button className="mt-3 text-sky-600 dark:text-sky-400 text-sm font-medium flex items-center gap-1">
+                                      <Play size={14} /> Start Learning
+                                    </button>
+                                  )}
                                 </div>
                               </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   )}
                   
                   {activeTab === 'reading' && (
                     <div className="space-y-6">
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-2">
                         {courseData.curriculum.map((week) => (
                           <button
                             key={week.week}
                             onClick={() => setSelectedWeek(week.week)}
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                            className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
                               selectedWeek === week.week
                                 ? 'bg-sky-500 text-white'
-                                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
                             }`}
                           >
                             Week {week.week}
@@ -436,33 +501,11 @@ export default function FullStackWebDevelopmentCourse() {
                       
                       {selectedWeek && (
                         <div className="prose prose-sm dark:prose-invert max-w-none">
-                          <div 
-                            dangerouslySetInnerHTML={{ 
-                              __html: courseData.curriculum.find(w => w.week === selectedWeek)?.readingContent || '<p>Reading content for this week is being prepared. Check back soon!</p>'
-                            }} 
-                          />
+                          <div dangerouslySetInnerHTML={{ 
+                            __html: courseData.curriculum.find(w => w.week === selectedWeek)?.readingContent || '<p>Loading...</p>'
+                          }} />
                         </div>
                       )}
-                    </div>
-                  )}
-                  
-                  {activeTab === 'projects' && (
-                    <div className="space-y-4">
-                      {courseData.projects.map((project, idx) => (
-                        <div key={idx} className="border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                          <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                            {idx + 1}. {project.title}
-                          </h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{project.description}</p>
-                          <div className="flex flex-wrap gap-2">
-                            {project.skills.map((skill, i) => (
-                              <span key={i} className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs px-2 py-1 rounded">
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
                     </div>
                   )}
                   
@@ -473,34 +516,36 @@ export default function FullStackWebDevelopmentCourse() {
                         return (
                           <div key={idx} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
                             <div className="flex items-center gap-3">
-                              <IconComponent size={20} className={resource.icon === 'FileText' ? 'text-blue-500' : 'text-green-500'} />
+                              <IconComponent size={20} className="text-blue-500" />
                               <div>
                                 <p className="font-medium text-gray-900 dark:text-white">{resource.name}</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">{resource.type} • {resource.size}</p>
+                                <p className="text-xs text-gray-500">{resource.type} • {resource.size}</p>
                               </div>
                             </div>
-                            <button className="text-sky-600 dark:text-sky-400 text-sm font-medium">
-                              <Download size={14} />
-                            </button>
+                            <button className="text-sky-600 text-sm"><Download size={14} /></button>
                           </div>
                         )
                       })}
                     </div>
                   )}
                   
+                  {activeTab === 'faq' && (
+                    <div className="space-y-4">
+                      {courseData.faqs.map((faq, idx) => (
+                        <div key={idx} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0">
+                          <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{faq.q}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{faq.a}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
                   {activeTab === 'quiz' && (
                     <div className="text-center py-8">
                       <Award className="w-16 h-16 text-amber-500 mx-auto mb-4" />
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                        Ready to Test Your Knowledge?
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-400 mb-6">
-                        Complete the quiz with 6+ correct answers to earn your certificate!
-                      </p>
-                      <button
-                        onClick={handleTakeQuiz}
-                        className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-600 transition-all"
-                      >
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Ready to Test Your Knowledge?</h3>
+                      <p className="text-gray-600 dark:text-gray-400 mb-6">Complete the quiz with 6+ correct answers to earn your certificate!</p>
+                      <button onClick={handleTakeQuiz} className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold px-8 py-3 rounded-xl">
                         Take Quiz (10 Questions)
                       </button>
                     </div>
@@ -515,7 +560,6 @@ export default function FullStackWebDevelopmentCourse() {
             <CourseSidebar 
               course={courseData} 
               isEnrolled={isEnrolled} 
-              setIsEnrolled={setIsEnrolled}
               onEnroll={handleEnroll}
               onContinue={handleContinueLearning}
               onShare={handleShare}
