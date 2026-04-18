@@ -7,7 +7,7 @@ import { Award, CheckCircle, XCircle, Clock } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth-context'
-import { getCourseById } from '@/app/data/courses'
+import { getCourseById } from '@/data/courses'
 
 const CONTAINER = "max-w-[900px] mx-auto px-3 sm:px-4 lg:px-6"
 
