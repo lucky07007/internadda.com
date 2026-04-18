@@ -5,11 +5,11 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { getCourseById } from '@/data/courses'
+import { useTheme } from 'next-themes'
 import { 
   Play, CheckCircle, Circle, ChevronRight, ChevronLeft, Menu, X, 
-  Clock, Award, FileText, Download, Maximize2, Minimize2, 
-  ArrowLeft, Home, Settings, BookOpen, Code, Coffee, ExternalLink,
-  Volume2, VolumeX, Pause, SkipForward, SkipBack, RotateCcw
+  Clock, Award, Maximize2, Minimize2, ArrowLeft, Home,
+  Volume2, VolumeX, Pause, SkipForward, SkipBack, Settings, BookOpen
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -19,13 +19,13 @@ export default function LearnPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { user } = useAuth()
+  const { theme, setTheme } = useTheme()
   const courseId = params?.id as string
   const videoRef = useRef<HTMLIFrameElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [activeLesson, setActiveLesson] = useState(0)
-  const [activeTab, setActiveTab] = useState<'notes' | 'resources' | 'transcript'>('notes')
   const [completedLessons, setCompletedLessons] = useState<number[]>([])
   const [progress, setProgress] = useState(0)
   const [mounted, setMounted] = useState(false)
@@ -33,6 +33,7 @@ export default function LearnPage() {
   const [showControls, setShowControls] = useState(true)
   const [isMuted, setIsMuted] = useState(false)
   const [isPlaying, setIsPlaying] = useState(true)
+  const [videoError, setVideoError] = useState(false)
 
   const courseData = getCourseById(courseId)
   const weeks = courseData?.weeks || []
@@ -86,6 +87,14 @@ export default function LearnPage() {
     }
   }
 
+  const handleTakeQuiz = () => {
+    if (progress >= 100) {
+      router.push(`/courses/${courseId}/quiz`)
+    } else {
+      alert(`Complete all lessons first! Progress: ${progress}%`)
+    }
+  }
+
   const handleNext = () => {
     if (activeLesson < weeks.length - 1) {
       setActiveLesson(prev => prev + 1)
@@ -102,32 +111,52 @@ export default function LearnPage() {
 
   if (!mounted || !courseData) return null
 
+  const isDark = theme === 'dark'
+
   return (
-    <div ref={containerRef} className="fixed inset-0 bg-[#0a0a0a] font-sans overflow-hidden">
-      {/* Minimal Header - Only visible when not fullscreen */}
+    <div 
+      ref={containerRef} 
+      className={`fixed inset-0 font-sans overflow-hidden ${isDark ? 'bg-[#0a0a0a]' : 'bg-white'}`}
+    >
+      {/* Minimal Header */}
       {!isFullscreen && (
-        <div className="absolute top-0 left-0 right-0 h-14 bg-black/90 backdrop-blur-md border-b border-white/10 z-30 flex items-center justify-between px-4">
+        <div className={`absolute top-0 left-0 right-0 h-14 z-30 flex items-center justify-between px-4 border-b ${
+          isDark ? 'bg-black/90 border-white/10' : 'bg-white/90 border-gray-200'
+        } backdrop-blur-md`}>
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push(`/courses/${courseId}`)}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white/70 hover:text-white"
+              className={`p-2 rounded-lg transition-colors ${
+                isDark ? 'hover:bg-white/10 text-white/70 hover:text-white' : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
+              }`}
             >
               <ArrowLeft size={20} />
             </button>
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/internadda.jpg" alt="InternAdda" width={28} height={28} className="rounded" />
-              <span className="font-bold text-white hidden sm:block">InternAdda</span>
+              <span className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>InternAdda</span>
             </Link>
-            <span className="text-white/30 mx-2 hidden md:block">|</span>
-            <span className="text-white/70 text-sm hidden md:block truncate max-w-[300px]">
+            <span className={`mx-2 ${isDark ? 'text-white/30' : 'text-gray-300'}`}>|</span>
+            <span className={`text-sm truncate max-w-[300px] hidden md:block ${
+              isDark ? 'text-white/70' : 'text-gray-600'
+            }`}>
               {courseData.title} • Week {currentLesson?.week}
             </span>
           </div>
           
           <div className="flex items-center gap-2">
             <button
+              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              className={`p-2 rounded-lg transition-colors ${
+                isDark ? 'hover:bg-white/10 text-white/70' : 'hover:bg-gray-100 text-gray-600'
+              }`}
+            >
+              <Settings size={18} />
+            </button>
+            <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white/70 hover:text-white"
+              className={`p-2 rounded-lg transition-colors ${
+                isDark ? 'hover:bg-white/10 text-white/70' : 'hover:bg-gray-100 text-gray-600'
+              }`}
             >
               {sidebarOpen ? <ChevronRight size={20} /> : <Menu size={20} />}
             </button>
@@ -135,42 +164,56 @@ export default function LearnPage() {
         </div>
       )}
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <div className={`h-full flex ${isFullscreen ? 'pt-0' : 'pt-14'}`}>
-        {/* Left Content Area - Video + Reading */}
-        <div className={`flex-1 overflow-y-auto transition-all duration-300 ${sidebarOpen ? 'lg:mr-[420px]' : ''}`}>
-          {/* Video Player Section */}
-          <div className="bg-black">
+        {/* Content Area */}
+        <div className={`flex-1 overflow-y-auto transition-all duration-300 ${
+          sidebarOpen ? 'lg:mr-[380px]' : ''
+        }`}>
+          {/* Video Player - Full Width */}
+          <div className={`${isDark ? 'bg-black' : 'bg-gray-900'}`}>
             <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-              {currentLesson?.videoId ? (
+              {currentLesson?.videoId && !videoError ? (
                 <iframe
                   ref={videoRef}
                   className="absolute inset-0 w-full h-full"
-                  src={`https://www.youtube.com/embed/${currentLesson.videoId}?autoplay=1&rel=0&modestbranding=1&showinfo=0&controls=0&mute=${isMuted ? 1 : 0}`}
+                  src={`https://www.youtube.com/embed/${currentLesson.videoId}?autoplay=1&rel=0&modestbranding=1&mute=${isMuted ? 1 : 0}`}
                   title={currentLesson.title}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                  onError={() => setVideoError(true)}
                 />
               ) : (
-                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
-                  <Play className="w-20 h-20 text-white/30" />
+                <div className={`absolute inset-0 flex items-center justify-center ${
+                  isDark ? 'bg-gray-900' : 'bg-gray-100'
+                }`}>
+                  <div className="text-center">
+                    <Play className={`w-16 h-16 mx-auto mb-3 ${isDark ? 'text-white/30' : 'text-gray-400'}`} />
+                    <p className={isDark ? 'text-white/50' : 'text-gray-500'}>
+                      {videoError ? 'Video unavailable' : currentLesson?.title}
+                    </p>
+                  </div>
                 </div>
               )}
               
-              {/* Video Controls Overlay */}
+              {/* Video Controls */}
               <div 
-                className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}
+                className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity duration-300 ${
+                  showControls ? 'opacity-100' : 'opacity-0'
+                }`}
                 onMouseEnter={() => setShowControls(true)}
                 onMouseLeave={() => setShowControls(false)}
               >
                 <div className="flex items-center gap-3 text-white">
-                  <button onClick={handlePrevious} disabled={activeLesson === 0} className="p-2 hover:bg-white/10 rounded-full disabled:opacity-30">
+                  <button onClick={handlePrevious} disabled={activeLesson === 0} 
+                          className="p-2 hover:bg-white/10 rounded-full disabled:opacity-30">
                     <SkipBack size={18} />
                   </button>
                   <button onClick={() => setIsPlaying(!isPlaying)} className="p-2 hover:bg-white/10 rounded-full">
                     {isPlaying ? <Pause size={20} /> : <Play size={20} />}
                   </button>
-                  <button onClick={handleNext} disabled={activeLesson === weeks.length - 1} className="p-2 hover:bg-white/10 rounded-full disabled:opacity-30">
+                  <button onClick={handleNext} disabled={activeLesson === weeks.length - 1} 
+                          className="p-2 hover:bg-white/10 rounded-full disabled:opacity-30">
                     <SkipForward size={18} />
                   </button>
                   
@@ -188,25 +231,37 @@ export default function LearnPage() {
           </div>
 
           {/* Lesson Info Bar */}
-          <div className="bg-[#1a1a1a] border-b border-white/10 px-6 py-4">
+          <div className={`border-b px-6 py-4 ${
+            isDark ? 'bg-[#1a1a1a] border-white/10' : 'bg-white border-gray-200'
+          }`}>
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <span className="text-xs font-semibold text-sky-400 bg-sky-400/10 px-2 py-0.5 rounded">
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
+                    isDark ? 'bg-sky-400/10 text-sky-400' : 'bg-sky-100 text-sky-700'
+                  }`}>
                     Week {currentLesson?.week}
                   </span>
-                  <span className="text-white/50 text-sm flex items-center gap-1">
+                  <span className={`text-sm flex items-center gap-1 ${
+                    isDark ? 'text-white/50' : 'text-gray-500'
+                  }`}>
                     <Clock size={14} /> {currentLesson?.duration}
                   </span>
                 </div>
-                <h1 className="text-xl font-bold text-white">{currentLesson?.title}</h1>
+                <h1 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {currentLesson?.title}
+                </h1>
               </div>
               <button
                 onClick={() => handleLessonComplete(activeLesson)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                   completedLessons.includes(activeLesson)
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-white/5 text-white/70 border border-white/10 hover:bg-white/10'
+                    ? isDark 
+                      ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                      : 'bg-green-50 text-green-700 border border-green-200'
+                    : isDark
+                      ? 'bg-white/5 text-white/70 border border-white/10 hover:bg-white/10'
+                      : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100'
                 }`}
               >
                 {completedLessons.includes(activeLesson) ? (
@@ -224,97 +279,45 @@ export default function LearnPage() {
             </div>
           </div>
 
-          {/* Tab Navigation */}
-          <div className="bg-[#1a1a1a] border-b border-white/10 px-6">
-            <div className="flex gap-6">
-              {[
-                { id: 'notes', label: '📝 Notes & Reading', icon: BookOpen },
-                { id: 'resources', label: '📎 Resources', icon: FileText },
-                { id: 'transcript', label: '📜 Transcript', icon: FileText }
-              ].map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`pb-3 text-sm font-medium transition-colors flex items-center gap-2 border-b-2 ${
-                    activeTab === tab.id
-                      ? 'text-sky-400 border-sky-400'
-                      : 'text-white/50 border-transparent hover:text-white/70'
-                  }`}
-                >
-                  <tab.icon size={16} />
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Reading Content Area - Full immersive */}
-          <div className="bg-[#0d0d0d] p-6 lg:p-8">
+          {/* Reading Content - Full Width */}
+          <div className={`p-6 lg:p-8 ${isDark ? 'bg-[#0d0d0d]' : 'bg-gray-50'}`}>
             <div className="max-w-4xl mx-auto">
-              {activeTab === 'notes' && (
-                <div className="prose prose-invert prose-lg max-w-none">
-                  <div dangerouslySetInnerHTML={{ __html: currentLesson?.readingContent || `
-                    <h2>📚 ${currentLesson?.title}</h2>
-                    <p class="text-white/70">Complete reading material for this lesson.</p>
-                    <h3>Topics Covered</h3>
-                    <ul>
-                      ${currentLesson?.topics.map(t => `<li>${t}</li>`).join('')}
-                    </ul>
-                  `}} />
-                </div>
-              )}
-
-              {activeTab === 'resources' && (
-                <div>
-                  <h2 className="text-xl font-bold text-white mb-6">Downloadable Resources</h2>
-                  <div className="grid gap-3">
-                    {currentLesson?.resources?.map((resource, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <FileText size={20} className="text-sky-400" />
-                          <div>
-                            <p className="font-medium text-white">{resource.name}</p>
-                            <p className="text-sm text-white/40">{resource.type} • {resource.size}</p>
-                          </div>
-                        </div>
-                        <button className="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-sm font-medium transition-colors">
-                          <Download size={14} />
-                          Download
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'transcript' && (
-                <div className="prose prose-invert max-w-none">
-                  <h2 className="text-xl font-bold text-white mb-4">Video Transcript</h2>
-                  <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-                    <p className="text-white/70 leading-relaxed">
-                      Transcript will be available here. You can follow along with the video content.
-                    </p>
-                  </div>
-                </div>
-              )}
+              <div className={`prose max-w-none ${
+                isDark ? 'prose-invert' : ''
+              }`}>
+                <div dangerouslySetInnerHTML={{ __html: currentLesson?.readingContent || `
+                  <h2>📚 ${currentLesson?.title}</h2>
+                  <p>Complete reading material for this lesson.</p>
+                  <h3>Topics Covered</h3>
+                  <ul>
+                    ${currentLesson?.topics.map((t: string) => `<li>${t}</li>`).join('')}
+                  </ul>
+                `}} />
+              </div>
 
               {/* Lesson Navigation */}
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
+              <div className={`flex items-center justify-between mt-8 pt-6 border-t ${
+                isDark ? 'border-white/10' : 'border-gray-200'
+              }`}>
                 <button
                   onClick={handlePrevious}
                   disabled={activeLesson === 0}
-                  className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className={`flex items-center gap-2 px-4 py-2 disabled:opacity-30 disabled:cursor-not-allowed transition-colors ${
+                    isDark ? 'text-white/70 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  }`}
                 >
                   <ChevronLeft size={18} />
                   Previous Lesson
                 </button>
-                <span className="text-white/40 text-sm">
+                <span className={`text-sm ${isDark ? 'text-white/40' : 'text-gray-400'}`}>
                   {activeLesson + 1} of {weeks.length} lessons
                 </span>
                 <button
                   onClick={handleNext}
                   disabled={activeLesson === weeks.length - 1}
-                  className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className={`flex items-center gap-2 px-4 py-2 disabled:opacity-30 disabled:cursor-not-allowed transition-colors ${
+                    isDark ? 'text-white/70 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  }`}
                 >
                   Next Lesson
                   <ChevronRight size={18} />
@@ -324,30 +327,35 @@ export default function LearnPage() {
           </div>
         </div>
 
-        {/* Right Sidebar - Course Content */}
+        {/* Sidebar */}
         <div className={`
-          fixed lg:relative right-0 top-14 lg:top-0 h-[calc(100vh-56px)] lg:h-full w-full sm:w-[420px] 
-          bg-[#1a1a1a] border-l border-white/10 overflow-y-auto transition-all duration-300 z-20
+          fixed lg:relative right-0 top-14 lg:top-0 h-[calc(100vh-56px)] lg:h-full 
+          w-full sm:w-[380px] overflow-y-auto transition-all duration-300 z-20 border-l
+          ${isDark ? 'bg-[#1a1a1a] border-white/10' : 'bg-white border-gray-200'}
           ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0 lg:w-20'}
         `}>
           <div className="p-4">
             <div className={`flex items-center justify-between mb-4 ${!sidebarOpen && 'lg:hidden'}`}>
-              <h3 className="font-bold text-white">Course Content</h3>
+              <h3 className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Course Content</h3>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden p-1 hover:bg-white/10 rounded"
+                className={`lg:hidden p-1 rounded ${
+                  isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100'
+                }`}
               >
-                <X size={18} className="text-white/70" />
+                <X size={18} className={isDark ? 'text-white/70' : 'text-gray-600'} />
               </button>
             </div>
 
             {/* Progress */}
             <div className={`mb-6 ${!sidebarOpen && 'lg:hidden'}`}>
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-white/50">Your Progress</span>
-                <span className="font-semibold text-sky-400">{progress}%</span>
+                <span className={isDark ? 'text-white/50' : 'text-gray-500'}>Your Progress</span>
+                <span className={`font-semibold ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>{progress}%</span>
               </div>
-              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+              <div className={`h-2 rounded-full overflow-hidden ${
+                isDark ? 'bg-white/10' : 'bg-gray-200'
+              }`}>
                 <div 
                   className="h-full bg-gradient-to-r from-sky-500 to-blue-500 rounded-full transition-all"
                   style={{ width: `${progress}%` }}
@@ -366,42 +374,63 @@ export default function LearnPage() {
                   }}
                   className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all text-left ${
                     activeLesson === idx
-                      ? 'bg-sky-500/20 border-l-2 border-sky-400'
-                      : 'hover:bg-white/5'
+                      ? isDark 
+                        ? 'bg-sky-500/20 border-l-2 border-sky-400' 
+                        : 'bg-sky-50 border-l-2 border-sky-500'
+                      : isDark
+                        ? 'hover:bg-white/5'
+                        : 'hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex-shrink-0">
                     {completedLessons.includes(idx) ? (
-                      <CheckCircle className="w-4 h-4 text-green-400" />
+                      <CheckCircle className={`w-4 h-4 ${isDark ? 'text-green-400' : 'text-green-500'}`} />
                     ) : lesson.isPreview ? (
-                      <Play className="w-4 h-4 text-sky-400" />
+                      <Play className={`w-4 h-4 ${isDark ? 'text-sky-400' : 'text-sky-500'}`} />
                     ) : (
-                      <Circle className="w-4 h-4 text-white/30" />
+                      <Circle className={`w-4 h-4 ${isDark ? 'text-white/30' : 'text-gray-300'}`} />
                     )}
                   </div>
                   {sidebarOpen && (
                     <div className="flex-1 min-w-0">
                       <p className={`text-sm font-medium truncate ${
-                        activeLesson === idx ? 'text-sky-300' : 'text-white/70'
+                        activeLesson === idx
+                          ? isDark ? 'text-sky-300' : 'text-sky-700'
+                          : isDark ? 'text-white/70' : 'text-gray-700'
                       }`}>
                         Week {lesson.week}: {lesson.title}
                       </p>
-                      <p className="text-xs text-white/40">{lesson.duration}</p>
+                      <p className={`text-xs ${isDark ? 'text-white/40' : 'text-gray-400'}`}>
+                        {lesson.duration}
+                      </p>
                     </div>
                   )}
                 </button>
               ))}
             </div>
 
-            {/* Quick Actions */}
+            {/* Quiz Button */}
             {sidebarOpen && (
-              <div className="mt-6 pt-6 border-t border-white/10 space-y-2">
-                <button className="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white py-3 rounded-xl text-sm font-medium transition-colors">
+              <div className="mt-6 pt-6 border-t space-y-2">
+                <button 
+                  onClick={handleTakeQuiz}
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all ${
+                    progress >= 100
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600'
+                      : isDark 
+                        ? 'bg-white/5 text-white/40 cursor-not-allowed' 
+                        : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
                   <Award size={16} />
-                  Take Quiz to Earn Certificate
+                  {progress >= 100 ? 'Take Quiz to Earn Certificate' : `Complete ${100 - progress}% more to unlock Quiz`}
                 </button>
-                <button className="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white py-3 rounded-xl text-sm font-medium transition-colors">
-                  <MessageCircle size={16} />
+                <button className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-colors ${
+                  isDark 
+                    ? 'bg-white/5 hover:bg-white/10 text-white/70 hover:text-white' 
+                    : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
+                }`}>
+                  <BookOpen size={16} />
                   Ask Question in Forum
                 </button>
               </div>
@@ -412,10 +441,3 @@ export default function LearnPage() {
     </div>
   )
 }
-
-// MessageCircle icon
-const MessageCircle = ({ size, className }: any) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-  </svg>
-)
