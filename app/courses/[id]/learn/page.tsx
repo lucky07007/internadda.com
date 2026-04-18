@@ -7,7 +7,7 @@ import { Play, CheckCircle, Circle, ChevronRight, ChevronLeft, Menu, X, FileText
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth-context'
-import { getCourseById } from '@/app/data/courses'
+import { getCourseById } from '@/data/courses'
 
 const CONTAINER = "max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6"
 
